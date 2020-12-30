@@ -14,7 +14,7 @@ const getUserFromToken = (token) => {
 const userResolvers = {
   Query: {
     me: (parent, args, { models, me }) => {
-      if (!me) throw new AuthenticationError('not authenticated');
+      if (!me) return null;
       return models.User.findById(me.id);
     },
 
