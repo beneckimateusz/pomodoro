@@ -1,3 +1,3 @@
-const User = require('../../db/models/user');
+const User = require('./user');
 
 module.exports = { User };

@@ -1,3 +1,3 @@
-const userResolvers = require('./user');
+const { userResolvers } = require('./user');
 
 module.exports = [userResolvers];

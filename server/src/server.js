@@ -4,12 +4,19 @@ const config = require('./utils/config');
 const resolvers = require('./graphql/resolvers');
 const schema = require('./graphql/schema');
 const models = require('./graphql/models');
+const { getUserFromToken } = require('./graphql/resolvers/user');
 
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  context: {
-    models,
+  context: async ({ req }) => {
+    const token = req.headers.authorization || '';
+    const me = getUserFromToken(token);
+
+    return {
+      me,
+      models,
+    };
   },
 });
 
