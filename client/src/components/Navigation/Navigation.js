@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import Layout from '../Layout/Layout';
 import Loading from '../Loading/Loading';
 import SignIn from '../SignIn/SignIn';
+import SignUp from '../SignUp/SignUp';
 
 export const CURRENT_USER = gql`
   query {
@@ -29,6 +30,9 @@ function Navigation() {
         <Route>
           {!me && (
             <Switch>
+              <Route exact path="/sign-up">
+                <SignUp />
+              </Route>
               <Route exact path="/sign-in">
                 <SignIn />
               </Route>

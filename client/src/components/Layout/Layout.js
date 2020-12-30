@@ -56,7 +56,7 @@ function Layout({ currentUser, children }) {
   };
 
   const userPanel = () => (
-    <>
+    <Grid item>
       <IconButton onClick={handleOpenUserMenu} color="inherit">
         <AccountCircle />
       </IconButton>
@@ -78,6 +78,21 @@ function Layout({ currentUser, children }) {
         <MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem>
         <MenuItem onClick={handleLogout}>Sign out</MenuItem>
       </Menu>
+    </Grid>
+  );
+
+  const authButtons = () => (
+    <>
+      <Grid item>
+        <Button size="small" color="inherit" component={Link} to="/sign-up">
+          Sign Up
+        </Button>
+      </Grid>
+      <Grid item>
+        <Button size="small" color="inherit" component={Link} to="/sign-in">
+          Sign In
+        </Button>
+      </Grid>
     </>
   );
 
@@ -99,20 +114,7 @@ function Layout({ currentUser, children }) {
                 pomodoro
               </Typography>
             </Grid>
-            <Grid item>
-              {currentUser ? (
-                userPanel()
-              ) : (
-                <Button
-                  size="small"
-                  color="inherit"
-                  component={Link}
-                  to="/sign-in"
-                >
-                  Sign In
-                </Button>
-              )}
-            </Grid>
+            {currentUser ? userPanel() : authButtons()}
           </Grid>
         </Toolbar>
       </AppBar>
