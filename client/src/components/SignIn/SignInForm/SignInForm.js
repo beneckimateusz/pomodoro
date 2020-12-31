@@ -18,6 +18,7 @@ function SignInForm({ onSubmit, disabled, apiError }) {
           <TextField
             fullWidth
             variant="outlined"
+            color="secondary"
             name="login"
             label="Username/Email"
             inputRef={register({ required: 'Username/Email is required' })}
@@ -30,6 +31,7 @@ function SignInForm({ onSubmit, disabled, apiError }) {
           <TextField
             fullWidth
             variant="outlined"
+            color="secondary"
             name="password"
             label="Password"
             type="password"

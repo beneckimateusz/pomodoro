@@ -26,6 +26,7 @@ function SignUpForm({ onSubmit, disabled, apiError }) {
           <TextField
             fullWidth
             variant="outlined"
+            color="secondary"
             name="username"
             label="Username"
             inputRef={register({
@@ -41,6 +42,7 @@ function SignUpForm({ onSubmit, disabled, apiError }) {
           <TextField
             fullWidth
             variant="outlined"
+            color="secondary"
             name="email"
             label="Email"
             inputRef={register({ required: true, pattern: /.+@.+/ })}
@@ -53,6 +55,7 @@ function SignUpForm({ onSubmit, disabled, apiError }) {
           <TextField
             fullWidth
             variant="outlined"
+            color="secondary"
             name="password"
             label="Password"
             type="password"

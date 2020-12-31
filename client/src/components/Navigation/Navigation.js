@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import Home from '../Home/Home';
 import Layout from '../Layout/Layout';
 import Loading from '../Loading/Loading';
 import SignIn from '../SignIn/SignIn';
@@ -25,7 +26,7 @@ function Navigation() {
     <Layout currentUser={me}>
       <Switch>
         <Route exact path="/">
-          <h1>Main page</h1>
+          <Home />
         </Route>
         <Route>
           {!me && (
