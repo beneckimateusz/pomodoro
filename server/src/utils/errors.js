@@ -1,4 +1,4 @@
-/*
+/**
  * Helper for getting custom error messages out of mongoose ValidationError objects.
  * You should provide it a full error object from catch clause
  * and a model name string.

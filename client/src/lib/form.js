@@ -1,4 +1,4 @@
-/*
+/**
  * Helper for react-hook-form error messages
  * useful when it comes to multiple validators used on one input
  *
