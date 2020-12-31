@@ -31,7 +31,7 @@ function SignIn(props) {
 
   return (
     <CenteredFormContainer title="Sign In">
-      <SignInForm onSubmit={handleSubmit} disabled={loading} failed={!!error} />
+      <SignInForm onSubmit={handleSubmit} disabled={loading} apiError={error} />
     </CenteredFormContainer>
   );
 }

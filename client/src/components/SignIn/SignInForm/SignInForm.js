@@ -3,15 +3,15 @@ import { Alert } from '@material-ui/lab';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 
-function SignInForm({ onSubmit, disabled, failed }) {
+function SignInForm({ onSubmit, disabled, apiError }) {
   const { register, handleSubmit, errors } = useForm();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container direction="column" spacing={2}>
-        {failed && (
+        {apiError && (
           <Grid item>
-            <Alert severity="error">Invalid credentials</Alert>
+            <Alert severity="error">{apiError.message}</Alert>
           </Grid>
         )}
         <Grid item>
@@ -59,7 +59,7 @@ function SignInForm({ onSubmit, disabled, failed }) {
 SignInForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
-  failed: PropTypes.bool.isRequired,
+  apiError: PropTypes.object,
 };
 
 export default SignInForm;

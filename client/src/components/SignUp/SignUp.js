@@ -31,7 +31,7 @@ function SignUp() {
 
   return (
     <CenteredFormContainer title="Sign Up">
-      <SignUpForm onSubmit={handleSubmit} disabled={loading} failed={!!error} />
+      <SignUpForm onSubmit={handleSubmit} disabled={loading} apiError={error} />
     </CenteredFormContainer>
   );
 }
