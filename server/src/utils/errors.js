@@ -1,15 +1,25 @@
-const { UserInputError } = require('apollo-server');
-
-const mongooseErrorHelper = (errors, modelName) => {
-  Object.values(errors).forEach((err) => {
-    // eslint-disable-next-line default-case
+/*
+ * Helper for getting custom error messages out of mongoose ValidationError objects.
+ * You should provide it a full error object from catch clause
+ * and a model name string.
+ *
+ * Expected return value: Array<String>
+ */
+const getMongooseValidationErrorMessages = ({ errors }, modelName) => {
+  const getErrorMessage = (err) => {
     switch (err.kind) {
       case 'unique':
-        throw new UserInputError(
-          `${modelName} with such ${err.path} already exists.`
-        );
+        return `${modelName} with such ${err.path} already exists`;
+      case 'user defined':
+        return err.message;
+      default:
+        return 'Something went wrong';
     }
-  });
+  };
+
+  return errors
+    ? Object.values(errors).map(getErrorMessage)
+    : ['Something went wrong'];
 };
 
-module.exports = { mongooseErrorHelper };
+module.exports = { getMongooseValidationErrorMessages };

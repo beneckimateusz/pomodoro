@@ -1,7 +1,7 @@
 const { AuthenticationError, UserInputError } = require('apollo-server');
 const jwt = require('jsonwebtoken');
 const config = require('../../utils/config');
-const { mongooseErrorHelper } = require('../../utils/errors');
+const { getMongooseValidationErrorMessages } = require('../../utils/errors');
 
 const createToken = ({ _id: id, username, email }) =>
   jwt.sign({ id, username, email }, config.JWT_SECRET);
@@ -30,9 +30,8 @@ const userResolvers = {
         const savedUser = await user.save();
         return { token: createToken(savedUser) };
       } catch (err) {
-        mongooseErrorHelper(err.errors, 'User');
-
-        throw new UserInputError('Something went wrong');
+        const messages = getMongooseValidationErrorMessages(err, 'User');
+        throw new UserInputError(messages[0]);
       }
     },
 
