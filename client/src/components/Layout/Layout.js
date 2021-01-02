@@ -1,7 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import {
   AppBar,
-  Button,
   Grid,
   IconButton,
   makeStyles,
@@ -55,8 +54,8 @@ function Layout({ currentUser, children }) {
     setUserMenuAnchorEl(null);
   };
 
-  const userPanel = () => (
-    <Grid item>
+  const userMenu = () => (
+    <>
       <IconButton onClick={handleOpenUserMenu} color="inherit">
         <AccountCircle />
       </IconButton>
@@ -74,25 +73,37 @@ function Layout({ currentUser, children }) {
         open={Boolean(userMenuAnchorEl)}
         onClose={handleCloseUserMenu}
       >
-        <MenuItem disabled>{currentUser.username}</MenuItem>
-        <MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem>
-        <MenuItem onClick={handleLogout}>Sign out</MenuItem>
+        {currentUser
+          ? [
+              <MenuItem key="username" disabled>
+                {currentUser.username}
+              </MenuItem>,
+              <MenuItem key="profile" onClick={handleCloseUserMenu}>
+                Profile
+              </MenuItem>,
+              <MenuItem key="sign-out" onClick={handleLogout}>
+                Sign Out
+              </MenuItem>,
+            ]
+          : [
+              <MenuItem
+                key="sign-in"
+                onClick={handleCloseUserMenu}
+                component={Link}
+                to="/sign-in"
+              >
+                Sign In
+              </MenuItem>,
+              <MenuItem
+                key="sign-up"
+                onClick={handleCloseUserMenu}
+                component={Link}
+                to="/sign-up"
+              >
+                Sign Up
+              </MenuItem>,
+            ]}
       </Menu>
-    </Grid>
-  );
-
-  const authButtons = () => (
-    <>
-      <Grid item>
-        <Button size="small" color="inherit" component={Link} to="/sign-up">
-          Sign Up
-        </Button>
-      </Grid>
-      <Grid item>
-        <Button size="small" color="inherit" component={Link} to="/sign-in">
-          Sign In
-        </Button>
-      </Grid>
     </>
   );
 
@@ -114,7 +125,7 @@ function Layout({ currentUser, children }) {
                 pomodoro
               </Typography>
             </Grid>
-            {currentUser ? userPanel() : authButtons()}
+            <Grid item>{userMenu()}</Grid>
           </Grid>
         </Toolbar>
       </AppBar>

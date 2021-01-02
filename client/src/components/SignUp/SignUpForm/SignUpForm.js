@@ -45,7 +45,7 @@ function SignUpForm({ onSubmit, disabled, apiError }) {
             color="secondary"
             name="email"
             label="Email"
-            inputRef={register({ required: true, pattern: /.+@.+/ })}
+            inputRef={register({ required: true, pattern: /.+@.+\..+/ })}
             error={!!errors.email}
             helperText={errors.email && errorMessages.email}
             disabled={disabled}
