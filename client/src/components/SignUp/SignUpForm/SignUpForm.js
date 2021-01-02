@@ -2,17 +2,9 @@ import { Button, Grid, TextField } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
-import { createErrorMessages } from '../../../lib/form';
 
 function SignUpForm({ onSubmit, disabled, apiError }) {
   const { register, handleSubmit, errors } = useForm();
-
-  const minLengths = {
-    username: 3,
-    password: 8,
-  };
-
-  const errorMessages = createErrorMessages(errors, minLengths);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -30,11 +22,14 @@ function SignUpForm({ onSubmit, disabled, apiError }) {
             name="username"
             label="Username"
             inputRef={register({
-              required: true,
-              minLength: minLengths.username,
+              required: 'Username is required',
+              minLength: {
+                value: 3,
+                message: 'Username should have at least 3 characters',
+              },
             })}
             error={!!errors.username}
-            helperText={errors.username && errorMessages.username}
+            helperText={errors.username?.message}
             disabled={disabled}
           />
         </Grid>
@@ -45,9 +40,12 @@ function SignUpForm({ onSubmit, disabled, apiError }) {
             color="secondary"
             name="email"
             label="Email"
-            inputRef={register({ required: true, pattern: /.+@.+\..+/ })}
+            inputRef={register({
+              required: 'Email is required',
+              pattern: { value: /.+@.+\..+/, message: 'Invalid email' },
+            })}
             error={!!errors.email}
-            helperText={errors.email && errorMessages.email}
+            helperText={errors.email?.message}
             disabled={disabled}
           />
         </Grid>
@@ -60,11 +58,14 @@ function SignUpForm({ onSubmit, disabled, apiError }) {
             label="Password"
             type="password"
             inputRef={register({
-              required: true,
-              minLength: minLengths.password,
+              required: 'Password is required',
+              minLength: {
+                value: 8,
+                message: 'Password should have at least 8 characters',
+              },
             })}
             error={!!errors.password}
-            helperText={errors.password && errorMessages.password}
+            helperText={errors.password?.message}
             disabled={disabled}
           />
         </Grid>

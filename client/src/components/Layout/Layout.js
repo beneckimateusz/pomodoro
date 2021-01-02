@@ -1,13 +1,17 @@
 import {
   AppBar,
   Grid,
+  IconButton,
   makeStyles,
   Toolbar,
   Typography,
 } from '@material-ui/core';
 import AlarmOnIcon from '@material-ui/icons/AlarmOn';
+import SettingsIcon from '@material-ui/icons/Settings';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import SettingsDialog from '../SettingsDialog/SettingsDialog';
 import UserMenu from './UserMenu/UserMenu';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Layout({ currentUser, children }) {
   const classes = useStyles();
+  const [settingsOpened, setSettingsOpened] = useState(false);
 
   return (
     <>
@@ -50,11 +55,23 @@ function Layout({ currentUser, children }) {
               </Typography>
             </Grid>
             <Grid item>
+              <IconButton
+                onClick={() => setSettingsOpened(true)}
+                color="inherit"
+              >
+                <SettingsIcon />
+              </IconButton>
+            </Grid>
+            <Grid item>
               <UserMenu currentUser={currentUser} />
             </Grid>
           </Grid>
         </Toolbar>
       </AppBar>
+      <SettingsDialog
+        opened={settingsOpened}
+        onClose={() => setSettingsOpened(false)}
+      />
       <div className={classes.content}>{children}</div>
     </>
   );
