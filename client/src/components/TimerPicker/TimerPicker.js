@@ -6,7 +6,7 @@ import TimerIcon from '@material-ui/icons/Timer';
 import { SpeedDial, SpeedDialAction } from '@material-ui/lab';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { TimerTypes } from '../../lib/timers';
+import { TimerType } from '../../lib/timer';
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
@@ -36,7 +36,7 @@ function TimerPicker({ onChange }) {
       icon: <LocalCafeIcon />,
       name: 'Long break',
       handleClick: () => {
-        onChange(TimerTypes.LONG_BREAK);
+        onChange(TimerType.LONG_BREAK);
         handleSpeedDialClose();
       },
     },
@@ -44,7 +44,7 @@ function TimerPicker({ onChange }) {
       icon: <PauseIcon />,
       name: 'Short break',
       handleClick: () => {
-        onChange(TimerTypes.SHORT_BREAK);
+        onChange(TimerType.SHORT_BREAK);
         handleSpeedDialClose();
       },
     },
@@ -52,7 +52,7 @@ function TimerPicker({ onChange }) {
       icon: <PlayArrowIcon />,
       name: 'Pomodoro',
       handleClick: () => {
-        onChange(TimerTypes.POMODORO);
+        onChange(TimerType.POMODORO);
         handleSpeedDialClose();
       },
     },

@@ -1,7 +1,7 @@
 import { Grid, makeStyles, Typography } from '@material-ui/core';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTimers } from '../../hooks/useTimers';
-import { TimerTypes } from '../../lib/timers';
+import { TimerState, TimerType } from '../../lib/timer';
 import Timer from '../Timer/Timer';
 import TimerPicker from '../TimerPicker/TimerPicker';
 
@@ -17,12 +17,35 @@ function Home() {
   const classes = useStyles();
 
   const { timers } = useTimers();
-  const [timer, setTimer] = useState(TimerTypes.POMODORO);
+  const [timer, setTimer] = useState(TimerType.POMODORO);
+  const [timerState, setTimerState] = useState(TimerState.STOPPED);
   const timerDuration = timers[timer];
 
   const handleTimerChange = (timer) => {
     setTimer(timer);
   };
+
+  const handleTimerStateChange = useCallback((state) => {
+    setTimerState(state);
+  }, []);
+
+  useEffect(() => {
+    const shortcutHandler = (e) => {
+      if (e.altKey) {
+        if (e.code === 'KeyP') {
+          handleTimerChange(TimerType.POMODORO);
+        } else if (e.code === 'KeyS') {
+          handleTimerChange(TimerType.SHORT_BREAK);
+        } else if (e.code === 'KeyL') {
+          handleTimerChange(TimerType.LONG_BREAK);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', shortcutHandler);
+
+    return () => window.removeEventListener('keydown', shortcutHandler);
+  }, [handleTimerStateChange]);
 
   return (
     <div>
@@ -34,7 +57,11 @@ function Home() {
         </Grid>
         {timers && (
           <Grid item>
-            <Timer duration={timerDuration} />
+            <Timer
+              duration={timerDuration}
+              state={timerState}
+              onStateChange={handleTimerStateChange}
+            />
           </Grid>
         )}
       </Grid>
