@@ -1,9 +1,9 @@
-import { Fade, LinearProgress } from '@material-ui/core';
+import { CircularProgress, Fade } from '@material-ui/core';
 
 function Loading() {
   return (
-    <Fade in={true} style={{ transitionDelay: '500ms' }}>
-      <LinearProgress />
+    <Fade in={true}>
+      <CircularProgress />
     </Fade>
   );
 }

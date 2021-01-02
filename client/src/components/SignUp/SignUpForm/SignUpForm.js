@@ -2,6 +2,7 @@ import { Button, Grid, TextField } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
+import Loading from '../../Loading/Loading';
 
 function SignUpForm({ onSubmit, disabled, apiError }) {
   const { register, handleSubmit, errors } = useForm();
@@ -9,6 +10,13 @@ function SignUpForm({ onSubmit, disabled, apiError }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container direction="column" spacing={2}>
+        {disabled && (
+          <Grid container item justify="center">
+            <Grid item>
+              <Loading />
+            </Grid>
+          </Grid>
+        )}
         {apiError && (
           <Grid item>
             <Alert severity="error">{apiError.message}</Alert>
