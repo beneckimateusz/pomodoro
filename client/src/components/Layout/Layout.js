@@ -1,19 +1,14 @@
-import { useApolloClient } from '@apollo/client';
 import {
   AppBar,
   Grid,
-  IconButton,
   makeStyles,
-  Menu,
-  MenuItem,
   Toolbar,
   Typography,
 } from '@material-ui/core';
-import { AccountCircle } from '@material-ui/icons';
 import AlarmOnIcon from '@material-ui/icons/AlarmOn';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import UserMenu from './UserMenu/UserMenu';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -35,77 +30,6 @@ const useStyles = makeStyles((theme) => ({
 
 function Layout({ currentUser, children }) {
   const classes = useStyles();
-  const client = useApolloClient();
-  const history = useHistory();
-  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
-
-  const handleOpenUserMenu = (event) => {
-    setUserMenuAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = () => {
-    setUserMenuAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    history.push('/');
-    client.resetStore();
-    setUserMenuAnchorEl(null);
-  };
-
-  const userMenu = () => (
-    <>
-      <IconButton onClick={handleOpenUserMenu} color="inherit">
-        <AccountCircle />
-      </IconButton>
-      <Menu
-        anchorEl={userMenuAnchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={Boolean(userMenuAnchorEl)}
-        onClose={handleCloseUserMenu}
-      >
-        {currentUser
-          ? [
-              <MenuItem key="username" disabled>
-                {currentUser.username}
-              </MenuItem>,
-              <MenuItem key="profile" onClick={handleCloseUserMenu}>
-                Profile
-              </MenuItem>,
-              <MenuItem key="sign-out" onClick={handleLogout}>
-                Sign Out
-              </MenuItem>,
-            ]
-          : [
-              <MenuItem
-                key="sign-in"
-                onClick={handleCloseUserMenu}
-                component={Link}
-                to="/sign-in"
-              >
-                Sign In
-              </MenuItem>,
-              <MenuItem
-                key="sign-up"
-                onClick={handleCloseUserMenu}
-                component={Link}
-                to="/sign-up"
-              >
-                Sign Up
-              </MenuItem>,
-            ]}
-      </Menu>
-    </>
-  );
 
   return (
     <>
@@ -125,7 +49,9 @@ function Layout({ currentUser, children }) {
                 pomodoro
               </Typography>
             </Grid>
-            <Grid item>{userMenu()}</Grid>
+            <Grid item>
+              <UserMenu currentUser={currentUser} />
+            </Grid>
           </Grid>
         </Toolbar>
       </AppBar>
