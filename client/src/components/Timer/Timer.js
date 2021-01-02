@@ -32,7 +32,7 @@ function Timer({ duration }) {
 
   const handleResetTimer = () => {
     handleStopTimer();
-    setTimeLeft(duration);
+    setTimeLeft(duration * 60 * 1000);
   };
 
   return (

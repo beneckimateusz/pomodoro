@@ -12,7 +12,7 @@ const SIGN_IN = gql`
   }
 `;
 
-function SignIn(props) {
+function SignIn() {
   const client = useApolloClient();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
