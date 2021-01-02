@@ -12,19 +12,23 @@ import {
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
+import { useTimers } from '../../hooks/useTimers';
 
 function SettingsDialog({ opened, onClose }) {
+  const { timers, setTimers } = useTimers();
   const { register, handleSubmit, errors } = useForm({
     defaultValues: {
-      pomodoro: 25,
-      shortBreak: 5,
-      longBreak: 15,
+      timers,
     },
   });
   const { enqueueSnackbar } = useSnackbar();
 
+  const handleClose = () => {
+    onClose();
+  };
+
   const handleValidSubmit = (data) => {
-    console.log(data);
+    setTimers(data.timers);
     enqueueSnackbar('Settings saved', {
       variant: 'info',
       anchorOrigin: {
@@ -33,10 +37,8 @@ function SettingsDialog({ opened, onClose }) {
       },
       autoHideDuration: 3000,
     });
-  };
 
-  const handleClose = () => {
-    onClose();
+    handleClose();
   };
 
   return (
@@ -53,7 +55,7 @@ function SettingsDialog({ opened, onClose }) {
                 <TextField
                   variant="outlined"
                   color="secondary"
-                  name="pomodoro"
+                  name="timers[pomodoro]"
                   label="Pomodoro"
                   type="number"
                   InputProps={{
@@ -68,15 +70,15 @@ function SettingsDialog({ opened, onClose }) {
                     },
                     valueAsNumber: true,
                   })}
-                  error={!!errors.pomodoro}
-                  helperText={errors.pomodoro?.message}
+                  error={!!errors.timers?.pomodoro}
+                  helperText={errors.timers?.pomodoro?.message}
                 />
               </Grid>
               <Grid item sm={4}>
                 <TextField
                   variant="outlined"
                   color="secondary"
-                  name="shortBreak"
+                  name="timers[shortBreak]"
                   label="Short break"
                   type="number"
                   InputProps={{
@@ -91,15 +93,15 @@ function SettingsDialog({ opened, onClose }) {
                     },
                     valueAsNumber: true,
                   })}
-                  error={!!errors.shortBreak}
-                  helperText={errors.shortBreak?.message}
+                  error={!!errors.timers?.shortBreak}
+                  helperText={errors.timers?.shortBreak?.message}
                 />
               </Grid>
               <Grid item sm={4}>
                 <TextField
                   variant="outlined"
                   color="secondary"
-                  name="longBreak"
+                  name="timers[longBreak]"
                   label="Long break"
                   type="number"
                   InputProps={{
@@ -114,8 +116,8 @@ function SettingsDialog({ opened, onClose }) {
                     },
                     valueAsNumber: true,
                   })}
-                  error={!!errors.longBreak}
-                  helperText={errors.longBreak?.message}
+                  error={!!errors.timers?.longBreak}
+                  helperText={errors.timers?.longBreak?.message}
                 />
               </Grid>
             </Grid>
@@ -125,9 +127,7 @@ function SettingsDialog({ opened, onClose }) {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
+          <Button onClick={handleClose}>Close</Button>
           <Button type="submit" color="primary">
             Save
           </Button>

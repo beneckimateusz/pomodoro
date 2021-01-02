@@ -1,12 +1,16 @@
 import { Button, Grid, Typography } from '@material-ui/core';
+import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { millisecondsToClockFormat } from '../../lib/utils';
 
-function Timer() {
-  // const timerDuration = 1 * 1000 * 60 * 60 * 3 + 1 * 5 * 1000;
-  const timerDuration = 25 * 60 * 1000;
-  const [timeLeft, setTimeLeft] = useState(timerDuration);
+function Timer({ duration }) {
+  const [timeLeft, setTimeLeft] = useState(duration * 60 * 1000);
   const [timerStopped, setTimerStopped] = useState(true);
+
+  useEffect(() => {
+    setTimerStopped(true);
+    setTimeLeft(duration * 60 * 1000);
+  }, [duration]);
 
   useEffect(() => {
     if (timerStopped || timeLeft === 0) return;
@@ -28,7 +32,7 @@ function Timer() {
 
   const handleResetTimer = () => {
     handleStopTimer();
-    setTimeLeft(timerDuration);
+    setTimeLeft(duration);
   };
 
   return (
@@ -75,5 +79,9 @@ function Timer() {
     </Grid>
   );
 }
+
+Timer.propTypes = {
+  duration: PropTypes.number.isRequired,
+};
 
 export default Timer;
