@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons';
+import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -8,6 +9,7 @@ import { Link, useHistory } from 'react-router-dom';
 function UserMenu({ currentUser }) {
   const client = useApolloClient();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -20,6 +22,14 @@ function UserMenu({ currentUser }) {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    enqueueSnackbar('Successfully signed out', {
+      variant: 'success',
+      anchorOrigin: {
+        vertical: 'bottom',
+        horizontal: 'center',
+      },
+      autoHideDuration: 3000,
+    });
     history.push('/');
     client.resetStore();
     setUserMenuAnchorEl(null);

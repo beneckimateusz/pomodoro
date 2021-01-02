@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 
@@ -20,9 +21,18 @@ function SettingsDialog({ opened, onClose }) {
       longBreak: 15,
     },
   });
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleValidSubmit = (data) => {
     console.log(data);
+    enqueueSnackbar('Settings saved', {
+      variant: 'info',
+      anchorOrigin: {
+        vertical: 'bottom',
+        horizontal: 'center',
+      },
+      autoHideDuration: 3000,
+    });
   };
 
   const handleClose = () => {
