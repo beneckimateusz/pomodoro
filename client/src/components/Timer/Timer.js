@@ -102,6 +102,7 @@ function Timer({ duration, state, onStateChange }) {
 Timer.propTypes = {
   duration: PropTypes.number.isRequired,
   state: PropTypes.oneOf(Object.values(TimerState)),
+  onStateChange: PropTypes.func.isRequired,
 };
 
 export default Timer;
