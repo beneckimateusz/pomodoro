@@ -4,13 +4,8 @@ const defaultSettings = {
     shortBreak: 5,
     longBreak: 15,
   },
+  desktopAlerts: true,
 };
-
-// export const timersInMinToMs = (timersInMin) => {
-//   const timersInMs = {};
-//   Object.keys(timersInMin).forEach(timer => timersInMs[timer] = timersInMin[timer] * 60 * 1000);
-//   return timersInMs;
-// };
 
 export const getSettingsFromStorage = () => {
   const settings = localStorage.getItem('settings');

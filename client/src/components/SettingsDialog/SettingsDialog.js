@@ -1,11 +1,11 @@
 import { Dialog, DialogTitle } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
-import { useTimers } from '../../hooks/useTimers';
+import useSettings from '../../hooks/useSettings';
 import SettingsForm from './SettingsForm/SettingsForm';
 
 function SettingsDialog({ opened, onClose }) {
-  const { timers, setTimers } = useTimers();
+  const { settings, changeSettings } = useSettings();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleClose = () => {
@@ -13,7 +13,7 @@ function SettingsDialog({ opened, onClose }) {
   };
 
   const handleValidSubmit = (data) => {
-    setTimers(data.timers);
+    changeSettings(data);
     enqueueSnackbar('Settings saved', {
       variant: 'info',
       anchorOrigin: {
@@ -30,7 +30,7 @@ function SettingsDialog({ opened, onClose }) {
     <Dialog open={opened} onClose={handleClose}>
       <DialogTitle>Settings</DialogTitle>
       <SettingsForm
-        initialValue={{ timers }}
+        initialValue={settings}
         onSubmit={handleValidSubmit}
         onClose={handleClose}
       />

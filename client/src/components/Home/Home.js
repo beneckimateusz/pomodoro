@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
 import { useCallback, useEffect, useState } from 'react';
-import { useTimers } from '../../hooks/useTimers';
+import useSettings from '../../hooks/useSettings';
 import { TimerState, TimerType } from '../../lib/timer';
 import Timer from '../Timer/Timer';
 import TimerPicker from '../TimerPicker/TimerPicker';
@@ -23,7 +23,9 @@ const useStyles = makeStyles((theme) => ({
 function Home() {
   const classes = useStyles();
 
-  const { timers } = useTimers();
+  const {
+    settings: { timers },
+  } = useSettings();
   const [timer, setTimer] = useState(TimerType.POMODORO);
   const [timerState, setTimerState] = useState(TimerState.STOPPED);
   const timerDuration = timers[timer];
