@@ -80,6 +80,7 @@ function Home() {
         direction="column"
         alignItems="center"
         justify="space-evenly"
+        spacing={2}
         className={classes.root}
       >
         <Grid container item direction="column" alignItems="center" spacing={2}>

@@ -5,6 +5,7 @@ const defaultSettings = {
     longBreak: 15,
   },
   desktopAlerts: false,
+  darkTheme: false,
 };
 
 export const getSettingsFromStorage = () => {

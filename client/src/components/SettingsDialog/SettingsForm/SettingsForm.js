@@ -159,6 +159,20 @@ function SettingsForm({ initialValue, onSubmit, onClose }) {
               </div>
             )}
           </Grid>
+          <Grid item>
+            <Controller
+              name="darkTheme"
+              control={control}
+              render={(props) => (
+                <Switch
+                  color="primary"
+                  checked={props.value}
+                  onChange={(e) => props.onChange(e.target.checked)}
+                />
+              )}
+            />
+            Dark theme
+          </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
