@@ -1,3 +1,5 @@
+const http = require('http');
+const path = require('path');
 const { ApolloServer } = require('apollo-server-express');
 const app = require('./app');
 const config = require('./utils/config');
@@ -22,6 +24,13 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/api' });
 
-app.listen(config.PORT, () => {
-  console.log(`Server ready at port ${config.PORT}`);
+const httpServer = http.createServer(app);
+const buildPath = path.join(__dirname, '../build');
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(buildPath, 'index.html'));
 });
+
+httpServer.listen({ port: config.PORT }, () =>
+  console.log(`Server running at port ${config.PORT}`)
+);
