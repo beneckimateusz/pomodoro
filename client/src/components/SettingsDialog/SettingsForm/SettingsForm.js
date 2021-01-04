@@ -4,16 +4,48 @@ import {
   DialogContent,
   Grid,
   InputAdornment,
+  makeStyles,
+  Switch,
   TextField,
   Typography,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
+const useStyles = makeStyles((theme) => ({
+  error: {
+    color: theme.palette.primary.main,
+  },
+}));
 
 function SettingsForm({ initialValue, onSubmit, onClose }) {
-  const { register, handleSubmit, errors } = useForm({
+  const classes = useStyles();
+  const { register, control, errors, setValue, handleSubmit } = useForm({
     defaultValues: initialValue,
   });
+  const [notificationsSupported, setNotificationsSupported] = useState(null);
+
+  useEffect(() => {
+    const browserNotificationSupport = 'Notification' in window;
+    setNotificationsSupported(browserNotificationSupport);
+
+    if (!browserNotificationSupport) {
+      setValue('desktopAlerts', false);
+    }
+  }, [setValue]);
+
+  const handleDesktopAlertsToggle = async (e) => {
+    if (e.target.checked) {
+      if (Notification.permission !== 'granted') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') return;
+      }
+      setValue('desktopAlerts', true);
+    } else {
+      setValue('desktopAlerts', false);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -94,7 +126,27 @@ function SettingsForm({ initialValue, onSubmit, onClose }) {
             </Grid>
           </Grid>
           <Grid item>
-            {/* an empty element as a workaround for unwanted scroll */}
+            <Typography variant="h6">Other</Typography>
+          </Grid>
+          <Grid item>
+            <Controller
+              name="desktopAlerts"
+              control={control}
+              render={(props) => (
+                <Switch
+                  color="primary"
+                  disabled={!notificationsSupported}
+                  checked={props.value}
+                  onChange={handleDesktopAlertsToggle}
+                />
+              )}
+            />
+            Desktop alerts
+            {!notificationsSupported && (
+              <div className={classes.error}>
+                Your browser doesn't support notifications
+              </div>
+            )}
           </Grid>
         </Grid>
       </DialogContent>

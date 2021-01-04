@@ -4,7 +4,7 @@ const defaultSettings = {
     shortBreak: 5,
     longBreak: 15,
   },
-  desktopAlerts: true,
+  desktopAlerts: false,
 };
 
 export const getSettingsFromStorage = () => {
@@ -13,5 +13,6 @@ export const getSettingsFromStorage = () => {
 };
 
 export const saveSettingsToStorage = (settings) => {
+  console.log('saving');
   localStorage.setItem('settings', JSON.stringify(settings));
 };

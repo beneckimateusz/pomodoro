@@ -10,7 +10,13 @@ import {
 import KeyboardIcon from '@material-ui/icons/Keyboard';
 import { useCallback, useEffect, useState } from 'react';
 import useSettings from '../../hooks/useSettings';
-import { TimerState, TimerType } from '../../lib/timer';
+import {
+  motivationText,
+  notificationText,
+  sessionTypeName,
+  TimerState,
+  TimerType,
+} from '../../lib/timer';
 import Timer from '../Timer/Timer';
 import TimerPicker from '../TimerPicker/TimerPicker';
 
@@ -23,20 +29,39 @@ const useStyles = makeStyles((theme) => ({
 function Home() {
   const classes = useStyles();
 
-  const {
-    settings: { timers },
-  } = useSettings();
+  const { settings } = useSettings();
   const [timer, setTimer] = useState(TimerType.POMODORO);
   const [timerState, setTimerState] = useState(TimerState.STOPPED);
-  const timerDuration = timers[timer];
+  const timerDuration = settings.timers[timer];
 
-  const handleTimerChange = useCallback((timer) => {
-    setTimer(timer);
-  }, []);
+  // TODO: Consider moving this somewhere else
+  const showBrowserNotification = useCallback(
+    (message) => {
+      if (settings.desktopAlerts) {
+        new Notification(message);
+      }
+    },
+    [settings.desktopAlerts]
+  );
 
   const handleTimerStateChange = useCallback((state) => {
     setTimerState(state);
   }, []);
+
+  const handleTimerChange = useCallback(
+    (timer) => {
+      handleTimerStateChange(TimerState.STOPPED);
+      setTimer(timer);
+    },
+    [handleTimerStateChange]
+  );
+
+  useEffect(() => {
+    if (timerState === TimerState.ENDED) {
+      const message = notificationText(timer);
+      showBrowserNotification(message);
+    }
+  }, [timerState, timer, showBrowserNotification]);
 
   useEffect(() => {
     const shortcutHandler = (e) => {
@@ -56,31 +81,6 @@ function Home() {
     return () => window.removeEventListener('keydown', shortcutHandler);
   }, [handleTimerChange]);
 
-  const sessionTypeName = () => {
-    switch (timer) {
-      case TimerType.POMODORO:
-        return 'Pomodoro';
-      case TimerType.SHORT_BREAK:
-        return 'Short break';
-      case TimerType.LONG_BREAK:
-        return 'Long break';
-      default:
-        return null;
-    }
-  };
-
-  const motivationText = () => {
-    if (timer === TimerType.POMODORO) {
-      return timerState === TimerState.STOPPED
-        ? "Let's get to work, shall we?"
-        : 'Keep it up!';
-    }
-
-    return timer === TimerType.SHORT_BREAK
-      ? 'Take it easy'
-      : "Refill what you're sipping on and come back";
-  };
-
   return (
     <div>
       <Grid
@@ -92,12 +92,14 @@ function Home() {
       >
         <Grid container item direction="column" alignItems="center" spacing={2}>
           <Grid item>
-            <Typography variant="h4">{sessionTypeName()}</Typography>
+            <Typography variant="h4">{sessionTypeName(timer)}</Typography>
           </Grid>
           <Grid item>
-            <Typography variant="h5">{motivationText()}</Typography>
+            <Typography variant="h5">
+              {motivationText(timer, timerState)}
+            </Typography>
           </Grid>
-          {timers && (
+          {settings.timers && (
             <Grid item>
               <Timer
                 duration={timerDuration}

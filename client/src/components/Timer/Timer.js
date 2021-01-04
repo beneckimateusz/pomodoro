@@ -16,20 +16,23 @@ function Timer({ duration, state, onStateChange }) {
     onStateChange(TimerState.STOPPED);
   }, [onStateChange]);
 
+  const handleEndTimer = useCallback(() => {
+    onStateChange(TimerState.ENDED);
+  }, [onStateChange]);
+
   const handleResetTimer = useCallback(() => {
     handleStopTimer();
     setTimeLeft(duration * 60 * 1000);
   }, [duration, handleStopTimer]);
 
   useEffect(() => {
-    handleStopTimer();
     setTimeLeft(duration * 60 * 1000);
-  }, [duration, handleStopTimer]);
+  }, [duration]);
 
   useEffect(() => {
-    if (state === TimerState.STOPPED) return;
+    if (state !== TimerState.STARTED) return;
     if (timeLeft === 0) {
-      handleStopTimer();
+      handleEndTimer();
       return;
     }
 
@@ -38,13 +41,13 @@ function Timer({ duration, state, onStateChange }) {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [state, timeLeft, handleStopTimer]);
+  }, [state, timeLeft, handleEndTimer]);
 
   useEffect(() => {
     const shortcutHandler = (e) => {
       if (e.altKey && e.code === 'KeyR') {
         handleResetTimer();
-      } else if (e.code === 'Space' && timeLeft !== 0) {
+      } else if (e.code === 'Space' && state !== TimerState.ENDED) {
         state === TimerState.STARTED ? handleStopTimer() : handleStartTimer();
       }
     };
@@ -52,7 +55,7 @@ function Timer({ duration, state, onStateChange }) {
     window.addEventListener('keydown', shortcutHandler);
 
     return () => window.removeEventListener('keydown', shortcutHandler);
-  }, [handleResetTimer, handleStopTimer, handleStartTimer, state, timeLeft]);
+  }, [handleResetTimer, handleStopTimer, handleStartTimer, state]);
 
   return (
     <Grid container direction="column" alignItems="center" spacing={3}>
@@ -67,7 +70,9 @@ function Timer({ duration, state, onStateChange }) {
             variant="outlined"
             color="primary"
             size="large"
-            disabled={timeLeft === 0 || state === TimerState.STARTED}
+            disabled={
+              state === TimerState.ENDED || state === TimerState.STARTED
+            }
             onClick={handleStartTimer}
           >
             Start
@@ -78,7 +83,9 @@ function Timer({ duration, state, onStateChange }) {
             variant="outlined"
             color="primary"
             size="large"
-            disabled={state === TimerState.STOPPED}
+            disabled={
+              state === TimerState.ENDED || state === TimerState.STOPPED
+            }
             onClick={handleStopTimer}
           >
             Stop
