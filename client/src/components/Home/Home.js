@@ -1,13 +1,4 @@
-import {
-  Avatar,
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  makeStyles,
-  Typography,
-} from '@material-ui/core';
-import KeyboardIcon from '@material-ui/icons/Keyboard';
+import { Grid, makeStyles, Typography } from '@material-ui/core';
 import { useCallback, useEffect, useState } from 'react';
 import useSettings from '../../hooks/useSettings';
 import {
@@ -17,6 +8,7 @@ import {
   TimerState,
   TimerType,
 } from '../../lib/timer';
+import KeyboardShortcutsCard from '../KeyboardShortcutsCard/KeyboardShortcutsCard';
 import Timer from '../Timer/Timer';
 import TimerPicker from '../TimerPicker/TimerPicker';
 
@@ -110,34 +102,7 @@ function Home() {
           )}
         </Grid>
         <Grid item>
-          <Card>
-            <CardHeader
-              avatar={
-                <Avatar>
-                  <KeyboardIcon />
-                </Avatar>
-              }
-              title="Keyboard shortcuts"
-              subheader="Simplify your workflow"
-            />
-            <CardContent>
-              <div>
-                <strong>SPACE</strong> - Toggle timer
-              </div>
-              <div>
-                <strong>ALT+P</strong> - Pomodoro
-              </div>
-              <div>
-                <strong>ALT+S</strong> - Short break
-              </div>
-              <div>
-                <strong>ALT+L</strong> - Long break
-              </div>
-              <div>
-                <strong>ALT+R</strong> - Reset
-              </div>
-            </CardContent>
-          </Card>
+          <KeyboardShortcutsCard />
         </Grid>
       </Grid>
       <TimerPicker onChange={handleTimerChange} />

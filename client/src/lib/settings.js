@@ -13,6 +13,5 @@ export const getSettingsFromStorage = () => {
 };
 
 export const saveSettingsToStorage = (settings) => {
-  console.log('saving');
   localStorage.setItem('settings', JSON.stringify(settings));
 };

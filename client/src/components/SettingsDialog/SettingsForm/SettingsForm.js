@@ -36,6 +36,7 @@ function SettingsForm({ initialValue, onSubmit, onClose }) {
   }, [setValue]);
 
   const handleDesktopAlertsToggle = async (e) => {
+    // Note: Not an ideal solution
     if (e.target.checked) {
       if (Notification.permission !== 'granted') {
         const permission = await Notification.requestPermission();
