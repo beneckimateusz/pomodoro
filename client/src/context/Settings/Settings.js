@@ -10,7 +10,6 @@ export function SettingsProvider({ children }) {
   const [settings, setSettings] = useState(initialSettings);
 
   useEffect(() => {
-    console.log('currentUser', currentUser);
     if (currentUser) {
       setSettings(currentUser.settings);
     } else {

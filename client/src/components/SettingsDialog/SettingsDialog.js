@@ -23,11 +23,6 @@ const UPDATE_USER_SETTINGS = gql`
   }
 `;
 
-// TODO: If the user denies permission for desktop alerts in browser interface
-// instead of the settings panel, opening settings again notices that change
-// and updates it in storage/db.
-// Problem: That one time it automatically closes settings and shows snackbar
-
 function SettingsDialog({ opened, onClose }) {
   const { currentUser } = useCurrentUser();
   const { settings, changeSettings } = useSettings();
@@ -52,7 +47,7 @@ function SettingsDialog({ opened, onClose }) {
       onCompleted: ({ updateUserSettings: updatedSettings }) => {
         handleValidSettingsUpdate(updatedSettings);
       },
-      onError: (err) => console.error(err),
+      onError: (err) => {},
     }
   );
 

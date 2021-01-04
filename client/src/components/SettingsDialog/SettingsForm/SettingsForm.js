@@ -29,31 +29,45 @@ function SettingsForm({ initialValue, onSubmit, onClose, disabled, apiError }) {
     errors,
     getValues,
     setValue,
+    setError,
+    clearErrors,
     handleSubmit,
   } = useForm({
     defaultValues: initialValue,
   });
-  const [notificationsSupported, setNotificationsSupported] = useState(null);
+
+  // null if not supported by the borwser
+  const [notificationsPermission, setNotificationsPermission] = useState(null);
 
   useEffect(() => {
-    const browserNotificationSupport = 'Notification' in window;
-    setNotificationsSupported(browserNotificationSupport);
-
-    if (!browserNotificationSupport) {
-      setValue('desktopAlerts', false);
-    } else if (
-      getValues('desktopAlerts') &&
-      Notification.permission !== 'granted'
-    ) {
-      setValue('desktopAlerts', false);
-      onSubmit(getValues());
+    if ('Notification' in window) {
+      setNotificationsPermission(Notification.permission);
     }
-  }, [setValue, getValues, onSubmit]);
+  }, [setValue]);
+
+  useEffect(() => {
+    if (notificationsPermission) {
+      // permissions in browser were revoked in the meantime
+      if (getValues('desktopAlerts') && notificationsPermission !== 'granted') {
+        setValue('desktopAlerts', false);
+      }
+
+      if (notificationsPermission === 'denied') {
+        setError('desktopAlerts', {
+          type: 'manual',
+          message: 'Your browser is blocking notifications on this site',
+        });
+      } else {
+        clearErrors('desktopAlerts');
+      }
+    }
+  }, [setValue, getValues, setError, clearErrors, notificationsPermission]);
 
   const handleDesktopAlertsToggle = async (e) => {
     if (e.target.checked) {
-      if (Notification.permission !== 'granted') {
+      if (notificationsPermission !== 'granted') {
         const permission = await Notification.requestPermission();
+        setNotificationsPermission(permission);
         if (permission !== 'granted') return;
       }
       setValue('desktopAlerts', true);
@@ -162,18 +176,19 @@ function SettingsForm({ initialValue, onSubmit, onClose, disabled, apiError }) {
               render={(props) => (
                 <Switch
                   color="primary"
-                  disabled={!notificationsSupported}
+                  disabled={!notificationsPermission || !!errors.desktopAlerts}
                   checked={props.value}
                   onChange={handleDesktopAlertsToggle}
                 />
               )}
             />
             Desktop alerts
-            {!notificationsSupported && (
+            {!notificationsPermission && (
               <div className={classes.error}>
                 Your browser doesn't support notifications
               </div>
             )}
+            <div className={classes.error}>{errors.desktopAlerts?.message}</div>
           </Grid>
           <Grid item>
             <Controller
