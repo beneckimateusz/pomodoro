@@ -7,6 +7,7 @@ import { millisecondsToClockFormat } from '../../lib/utils';
 // TODO: Add comments
 function Timer({ duration, state, onStateChange }) {
   const [timeLeft, setTimeLeft] = useState(duration * 60 * 1000);
+  const humanReadableTime = millisecondsToClockFormat(timeLeft);
 
   const handleStartTimer = useCallback(() => {
     onStateChange(TimerState.STARTED);
@@ -29,6 +30,7 @@ function Timer({ duration, state, onStateChange }) {
     setTimeLeft(duration * 60 * 1000);
   }, [duration]);
 
+  // TODO: rewrite using dates
   useEffect(() => {
     if (state !== TimerState.STARTED) return;
     if (timeLeft === 0) {
@@ -36,12 +38,20 @@ function Timer({ duration, state, onStateChange }) {
       return;
     }
 
-    const intervalId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setTimeLeft(timeLeft - 1000);
     }, 1000);
 
-    return () => clearInterval(intervalId);
+    return () => clearTimeout(timeoutId);
   }, [state, timeLeft, handleEndTimer]);
+
+  useEffect(() => {
+    if (state === TimerState.STARTED || state === TimerState.ENDED) {
+      document.title = `(${humanReadableTime}) Pomodoro`;
+    } else if (timeLeft === duration * 60 * 1000) {
+      document.title = 'Pomodoro';
+    }
+  }, [state, timeLeft, humanReadableTime, duration]);
 
   useEffect(() => {
     const shortcutHandler = (e) => {
@@ -60,9 +70,7 @@ function Timer({ duration, state, onStateChange }) {
   return (
     <Grid container direction="column" alignItems="center" spacing={3}>
       <Grid item>
-        <Typography variant="h1">
-          {millisecondsToClockFormat(timeLeft)}
-        </Typography>
+        <Typography variant="h1">{humanReadableTime}</Typography>
       </Grid>
       <Grid item container justify="center" spacing={2}>
         <Grid item>
