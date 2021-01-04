@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import { getSettingsFromStorage } from '../../lib/settings';
 
@@ -6,14 +6,17 @@ const SettingsContext = React.createContext();
 
 export function SettingsProvider({ children }) {
   const { currentUser } = useCurrentUser();
-  const initialSettings = getSettingsFromStorage();
+  const initialSettings = useMemo(() => getSettingsFromStorage(), []);
   const [settings, setSettings] = useState(initialSettings);
 
   useEffect(() => {
+    console.log('currentUser', currentUser);
     if (currentUser) {
       setSettings(currentUser.settings);
+    } else {
+      setSettings(initialSettings);
     }
-  }, [currentUser]);
+  }, [currentUser, initialSettings]);
 
   return (
     <SettingsContext.Provider value={{ settings, setSettings }}>
