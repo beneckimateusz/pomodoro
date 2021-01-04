@@ -1,6 +1,7 @@
 import { Dialog, DialogTitle } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
+import { useCallback } from 'react';
 import useSettings from '../../hooks/useSettings';
 import SettingsForm from './SettingsForm/SettingsForm';
 
@@ -12,19 +13,22 @@ function SettingsDialog({ opened, onClose }) {
     onClose();
   };
 
-  const handleValidSubmit = (data) => {
-    changeSettings(data);
-    enqueueSnackbar('Settings saved', {
-      variant: 'info',
-      anchorOrigin: {
-        vertical: 'bottom',
-        horizontal: 'center',
-      },
-      autoHideDuration: 3000,
-    });
-
-    handleClose();
-  };
+  const handleValidSubmit = useCallback(
+    (data, showSnackbar) => {
+      changeSettings(data);
+      if (showSnackbar) {
+        enqueueSnackbar('Settings saved', {
+          variant: 'info',
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'center',
+          },
+          autoHideDuration: 3000,
+        });
+      }
+    },
+    [changeSettings, enqueueSnackbar]
+  );
 
   return (
     <Dialog open={opened} onClose={handleClose}>

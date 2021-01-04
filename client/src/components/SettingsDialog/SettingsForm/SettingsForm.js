@@ -32,11 +32,16 @@ function SettingsForm({ initialValue, onSubmit, onClose }) {
 
     if (!browserNotificationSupport) {
       setValue('desktopAlerts', false);
+    } else if (
+      initialValue.desktopAlerts &&
+      Notification.permission !== 'granted'
+    ) {
+      setValue('desktopAlerts', false);
+      onSubmit({ ...initialValue, desktopAlerts: false });
     }
-  }, [setValue]);
+  }, [setValue, initialValue, onSubmit]);
 
   const handleDesktopAlertsToggle = async (e) => {
-    // Note: Not an ideal solution
     if (e.target.checked) {
       if (Notification.permission !== 'granted') {
         const permission = await Notification.requestPermission();
@@ -48,8 +53,13 @@ function SettingsForm({ initialValue, onSubmit, onClose }) {
     }
   };
 
+  const submitAndClose = (data) => {
+    onSubmit(data, true);
+    onClose();
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(submitAndClose)}>
       <DialogContent>
         <Grid container direction="column" spacing={2}>
           <Grid item>
