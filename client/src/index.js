@@ -3,16 +3,19 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { client } from './components/App/apollo';
 import App from './components/App/App';
-import { SettingsProvider } from './context/Settings';
+import { SettingsProvider } from './context/Settings/Settings';
+import { UserProvider } from './context/User/User';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <SettingsProvider>
-        <App />
-      </SettingsProvider>
+      <UserProvider>
+        <SettingsProvider>
+          <App />
+        </SettingsProvider>
+      </UserProvider>
     </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')

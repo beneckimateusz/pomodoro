@@ -48,6 +48,20 @@ const userResolvers = {
 
       return { token: createToken(user) };
     },
+
+    updateUserSettings: async (parent, { settings }, { models, me }) => {
+      if (!me) throw new AuthenticationError('not authenticated');
+
+      const user = await models.User.findById(me.id);
+      try {
+        user.settings = settings;
+        const savedUser = await user.save();
+        return savedUser.settings;
+      } catch (err) {
+        const messages = getMongooseValidationErrorMessages(err, 'User');
+        throw new UserInputError(messages[0]);
+      }
+    },
   },
 };
 

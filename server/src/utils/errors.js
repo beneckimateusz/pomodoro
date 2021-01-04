@@ -10,6 +10,7 @@ const getMongooseValidationErrorMessages = ({ errors }, modelName) => {
     switch (err.kind) {
       case 'unique':
         return `${modelName} with such ${err.path} already exists`;
+      case 'min':
       case 'user defined':
         return err.message;
       default:

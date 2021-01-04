@@ -20,6 +20,33 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  settings: {
+    timers: {
+      pomodoro: {
+        type: Number,
+        min: [1, "Pomodoro can't be shorter than 1 minute"],
+        default: 25,
+      },
+      shortBreak: {
+        type: Number,
+        min: [1, "Short break can't be shorter than 1 minute"],
+        default: 5,
+      },
+      longBreak: {
+        type: Number,
+        min: [1, "Long break can't be shorter than 1 minute"],
+        default: 15,
+      },
+    },
+    desktopAlerts: {
+      type: Boolean,
+      default: false,
+    },
+    darkTheme: {
+      type: Boolean,
+      default: false,
+    },
+  },
 });
 
 userSchema.plugin(mongooseUniqueValidator);

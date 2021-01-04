@@ -1,6 +1,7 @@
 import { gql, useApolloClient, useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
+import { bottomCenterSnackbarOptions } from '../../lib/utils';
 import CenteredFormContainer from '../CenteredFormContainer/CenteredFormContainer';
 import SignInForm from './SignInForm/SignInForm';
 
@@ -21,14 +22,10 @@ function SignIn() {
       if (signIn?.token) {
         localStorage.setItem('token', signIn.token);
         await client.reFetchObservableQueries();
-        enqueueSnackbar('Successfully signed in', {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'center',
-          },
-          autoHideDuration: 3000,
-        });
+        enqueueSnackbar(
+          'Successfully signed in',
+          bottomCenterSnackbarOptions('success')
+        );
         history.push('/');
       }
     },

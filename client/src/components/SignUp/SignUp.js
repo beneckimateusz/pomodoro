@@ -1,6 +1,7 @@
 import { gql, useApolloClient, useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
+import { bottomCenterSnackbarOptions } from '../../lib/utils';
 import CenteredFormContainer from '../CenteredFormContainer/CenteredFormContainer';
 import SignUpForm from './SignUpForm/SignUpForm';
 
@@ -21,14 +22,10 @@ function SignUp() {
       if (signUp?.token) {
         localStorage.setItem('token', signUp.token);
         await client.reFetchObservableQueries();
-        enqueueSnackbar('Welcome aboard!', {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'center',
-          },
-          autoHideDuration: 3000,
-        });
+        enqueueSnackbar(
+          'Welcome aboard!',
+          bottomCenterSnackbarOptions('success')
+        );
         history.push('/');
       }
     },

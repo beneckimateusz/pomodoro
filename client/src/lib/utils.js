@@ -18,3 +18,12 @@ export const millisecondsToClockFormat = (milliseconds) => {
     .substr(11, 8)
     .replace(/00:(\d+):(\d+)/, '$1:$2');
 };
+
+export const bottomCenterSnackbarOptions = (variant) => ({
+  variant,
+  anchorOrigin: {
+    vertical: 'bottom',
+    horizontal: 'center',
+  },
+  autoHideDuration: 3000,
+});

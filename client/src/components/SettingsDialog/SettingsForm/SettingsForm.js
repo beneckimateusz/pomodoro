@@ -9,9 +9,11 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import Loading from '../../Loading/Loading';
 
 const useStyles = makeStyles((theme) => ({
   error: {
@@ -19,9 +21,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function SettingsForm({ initialValue, onSubmit, onClose }) {
+function SettingsForm({ initialValue, onSubmit, onClose, disabled, apiError }) {
   const classes = useStyles();
-  const { register, control, errors, setValue, handleSubmit } = useForm({
+  const {
+    register,
+    control,
+    errors,
+    getValues,
+    setValue,
+    handleSubmit,
+  } = useForm({
     defaultValues: initialValue,
   });
   const [notificationsSupported, setNotificationsSupported] = useState(null);
@@ -33,13 +42,13 @@ function SettingsForm({ initialValue, onSubmit, onClose }) {
     if (!browserNotificationSupport) {
       setValue('desktopAlerts', false);
     } else if (
-      initialValue.desktopAlerts &&
+      getValues('desktopAlerts') &&
       Notification.permission !== 'granted'
     ) {
       setValue('desktopAlerts', false);
-      onSubmit({ ...initialValue, desktopAlerts: false });
+      onSubmit(getValues());
     }
-  }, [setValue, initialValue, onSubmit]);
+  }, [setValue, getValues, onSubmit]);
 
   const handleDesktopAlertsToggle = async (e) => {
     if (e.target.checked) {
@@ -53,15 +62,22 @@ function SettingsForm({ initialValue, onSubmit, onClose }) {
     }
   };
 
-  const submitAndClose = (data) => {
-    onSubmit(data, true);
-    onClose();
-  };
-
   return (
-    <form onSubmit={handleSubmit(submitAndClose)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <DialogContent>
         <Grid container direction="column" spacing={2}>
+          {disabled && (
+            <Grid container item justify="center">
+              <Grid item>
+                <Loading />
+              </Grid>
+            </Grid>
+          )}
+          {apiError && (
+            <Grid item>
+              <Alert severity="error">{apiError.message}</Alert>
+            </Grid>
+          )}
           <Grid item>
             <Typography variant="h6">Timer durations</Typography>
           </Grid>
@@ -189,6 +205,8 @@ SettingsForm.propTypes = {
   initialValue: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  apiError: PropTypes.object,
 };
 
 export default SettingsForm;

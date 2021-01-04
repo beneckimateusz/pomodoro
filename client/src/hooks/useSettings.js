@@ -1,6 +1,5 @@
 import { useCallback, useContext } from 'react';
-import SettingsContext from '../context/Settings';
-import { saveSettingsToStorage } from '../lib/settings';
+import SettingsContext from '../context/Settings/Settings';
 
 function useSettings() {
   const { settings, setSettings } = useContext(SettingsContext);
@@ -8,7 +7,6 @@ function useSettings() {
   const changeSettings = useCallback(
     (newSettings) => {
       setSettings(newSettings);
-      saveSettingsToStorage(newSettings);
     },
     [setSettings]
   );
