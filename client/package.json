@@ -62,5 +62,6 @@
     "src/**/*.{js,jsx,json}": [
       "eslint --cache --fix"
     ]
-  }
+  },
+  "proxy": "http://localhost:4000"
 }
