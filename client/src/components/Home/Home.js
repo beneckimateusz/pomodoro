@@ -24,7 +24,7 @@ function Home() {
   const { settings } = useSettings();
   const [timer, setTimer] = useState(TimerType.POMODORO);
   const [timerState, setTimerState] = useState(TimerState.STOPPED);
-  const timerDuration = settings.timers[timer];
+  const timerDuration = settings.timers[timer] * 60 * 1000;
 
   // TODO: Consider moving this somewhere else
   const showBrowserNotification = useCallback(

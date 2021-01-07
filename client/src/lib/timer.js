@@ -40,3 +40,19 @@ export const notificationText = (timer) => {
     ? 'Time is up! Get some rest'
     : 'Break is over. You can get back to work';
 };
+
+/**
+ * Converts milliseconds to a human-friendly string.
+ */
+export const millisecondsToClockFormat = (milliseconds) => {
+  if (!Number.isFinite(milliseconds)) {
+    throw new Error(
+      `Invalid milliseconds, expected positive number, got ${milliseconds}.`
+    );
+  }
+
+  return new Date(milliseconds)
+    .toISOString()
+    .substr(11, 8)
+    .replace(/00:(\d+):(\d+)/, '$1:$2');
+};

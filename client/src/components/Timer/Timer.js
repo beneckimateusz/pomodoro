@@ -1,54 +1,54 @@
 import { Button, Grid, Typography } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useState } from 'react';
-import { TimerState } from '../../lib/timer';
-import { millisecondsToClockFormat } from '../../lib/utils';
+import { millisecondsToClockFormat, TimerState } from '../../lib/timer';
 
 // TODO: Add comments
 function Timer({ duration, state, onStateChange }) {
-  const [timeLeft, setTimeLeft] = useState(duration * 60 * 1000);
+  const [deadline, setDeadline] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(duration);
   const humanReadableTime = millisecondsToClockFormat(timeLeft);
 
   const handleStartTimer = useCallback(() => {
+    setDeadline(Date.now() + timeLeft);
     onStateChange(TimerState.STARTED);
-  }, [onStateChange]);
+  }, [onStateChange, setDeadline, timeLeft]);
 
   const handleStopTimer = useCallback(() => {
     onStateChange(TimerState.STOPPED);
   }, [onStateChange]);
 
   const handleEndTimer = useCallback(() => {
+    setTimeLeft(0);
     onStateChange(TimerState.ENDED);
   }, [onStateChange]);
 
   const handleResetTimer = useCallback(() => {
     handleStopTimer();
-    setTimeLeft(duration * 60 * 1000);
+    setTimeLeft(duration);
   }, [duration, handleStopTimer]);
 
   useEffect(() => {
-    setTimeLeft(duration * 60 * 1000);
+    setTimeLeft(duration);
   }, [duration]);
 
-  // TODO: rewrite using dates
   useEffect(() => {
     if (state !== TimerState.STARTED) return;
-    if (timeLeft === 0) {
-      handleEndTimer();
-      return;
-    }
 
-    const timeoutId = setTimeout(() => {
-      setTimeLeft(timeLeft - 1000);
-    }, 1000);
+    const intervalId = setInterval(() => {
+      const delta = deadline - Date.now();
+      setTimeLeft(delta);
 
-    return () => clearTimeout(timeoutId);
-  }, [state, timeLeft, handleEndTimer]);
+      if (delta < 1000) handleEndTimer();
+    }, 250);
+
+    return () => clearInterval(intervalId);
+  }, [state, deadline, handleEndTimer]);
 
   useEffect(() => {
-    if (state === TimerState.STARTED || state === TimerState.ENDED) {
+    if (state === TimerState.STARTED) {
       document.title = `(${humanReadableTime}) Pomodoro`;
-    } else if (timeLeft === duration * 60 * 1000) {
+    } else if (timeLeft === duration) {
       document.title = 'Pomodoro';
     }
   }, [state, timeLeft, humanReadableTime, duration]);
@@ -104,6 +104,7 @@ function Timer({ duration, state, onStateChange }) {
             variant="outlined"
             color="primary"
             size="large"
+            disabled={timeLeft === duration}
             onClick={handleResetTimer}
           >
             Reset
