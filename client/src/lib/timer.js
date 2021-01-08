@@ -37,8 +37,8 @@ export const motivationText = (timer, timerState) => {
 
 export const notificationText = (timer) => {
   return timer === TimerType.POMODORO
-    ? 'Time is up! Get some rest'
-    : 'Break is over. You can get back to work';
+    ? { title: 'Time is up!', body: 'Get some rest' }
+    : { title: 'Break is over', body: 'You can get back to work' };
 };
 
 /**

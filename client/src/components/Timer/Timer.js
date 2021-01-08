@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import { useCallback, useEffect, useState } from 'react';
 import { millisecondsToClockFormat, TimerState } from '../../lib/timer';
 
-// TODO: Add comments
 function Timer({ duration, state, onStateChange }) {
   const [deadline, setDeadline] = useState(null);
   const [timeLeft, setTimeLeft] = useState(duration);
   const humanReadableTime = millisecondsToClockFormat(timeLeft);
+
+  useEffect(() => {
+    setTimeLeft(duration);
+  }, [duration]);
 
   const handleStartTimer = useCallback(() => {
     setDeadline(Date.now() + timeLeft);
@@ -28,10 +31,7 @@ function Timer({ duration, state, onStateChange }) {
     setTimeLeft(duration);
   }, [duration, handleStopTimer]);
 
-  useEffect(() => {
-    setTimeLeft(duration);
-  }, [duration]);
-
+  // countdown logic
   useEffect(() => {
     if (state !== TimerState.STARTED) return;
 
@@ -45,6 +45,7 @@ function Timer({ duration, state, onStateChange }) {
     return () => clearInterval(intervalId);
   }, [state, deadline, handleEndTimer]);
 
+  // document.title management
   useEffect(() => {
     if (state === TimerState.STARTED) {
       document.title = `(${humanReadableTime}) Pomodoro`;
@@ -53,6 +54,7 @@ function Timer({ duration, state, onStateChange }) {
     }
   }, [state, timeLeft, humanReadableTime, duration]);
 
+  // keyboard shortcuts registration
   useEffect(() => {
     const shortcutHandler = (e) => {
       if (e.altKey && e.code === 'KeyR') {
@@ -78,9 +80,7 @@ function Timer({ duration, state, onStateChange }) {
             variant="outlined"
             color="primary"
             size="large"
-            disabled={
-              state === TimerState.ENDED || state === TimerState.STARTED
-            }
+            disabled={timeLeft === 0 || state === TimerState.STARTED}
             onClick={handleStartTimer}
           >
             Start
@@ -91,9 +91,7 @@ function Timer({ duration, state, onStateChange }) {
             variant="outlined"
             color="primary"
             size="large"
-            disabled={
-              state === TimerState.ENDED || state === TimerState.STOPPED
-            }
+            disabled={timeLeft === 0 || state === TimerState.STOPPED}
             onClick={handleStopTimer}
           >
             Stop

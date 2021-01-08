@@ -1,5 +1,6 @@
 import { Grid, makeStyles, Typography } from '@material-ui/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import alertSound from '../../assets/alert.mp3';
 import useSettings from '../../hooks/useSettings';
 import {
   motivationText,
@@ -8,6 +9,7 @@ import {
   TimerState,
   TimerType,
 } from '../../lib/timer';
+import { showBrowserNotification } from '../../lib/utils';
 import KeyboardShortcutsCard from '../KeyboardShortcutsCard/KeyboardShortcutsCard';
 import Timer from '../Timer/Timer';
 import TimerPicker from '../TimerPicker/TimerPicker';
@@ -20,21 +22,12 @@ const useStyles = makeStyles((theme) => ({
 
 function Home() {
   const classes = useStyles();
+  const alert = useMemo(() => new Audio(alertSound), []);
 
   const { settings } = useSettings();
   const [timer, setTimer] = useState(TimerType.POMODORO);
   const [timerState, setTimerState] = useState(TimerState.STOPPED);
   const timerDuration = settings.timers[timer] * 60 * 1000;
-
-  // TODO: Consider moving this somewhere else
-  const showBrowserNotification = useCallback(
-    (message) => {
-      if (settings.desktopAlerts) {
-        new Notification(message);
-      }
-    },
-    [settings.desktopAlerts]
-  );
 
   const handleTimerStateChange = useCallback((state) => {
     setTimerState(state);
@@ -50,10 +43,14 @@ function Home() {
 
   useEffect(() => {
     if (timerState === TimerState.ENDED) {
-      const message = notificationText(timer);
-      showBrowserNotification(message);
+      alert.play();
+
+      if (settings.desktopAlerts) {
+        const { title, body } = notificationText(timer);
+        showBrowserNotification(title, body);
+      }
     }
-  }, [timerState, timer, showBrowserNotification]);
+  }, [timerState, timer, alert, settings.desktopAlerts]);
 
   useEffect(() => {
     const shortcutHandler = (e) => {

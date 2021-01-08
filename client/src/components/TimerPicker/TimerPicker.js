@@ -23,8 +23,8 @@ function TimerPicker({ onChange }) {
   const classes = useStyles();
   const [speedDialOpened, setSpeedDialOpened] = useState(false);
 
-  const handleSpeedDialOpen = () => {
-    setSpeedDialOpened(true);
+  const toggleSpeedDial = () => {
+    setSpeedDialOpened(!speedDialOpened);
   };
 
   const handleSpeedDialClose = () => {
@@ -63,8 +63,7 @@ function TimerPicker({ onChange }) {
       ariaLabel="Pomodoro timer options"
       className={classes.speedDial}
       icon={<TimerIcon />}
-      onClose={handleSpeedDialClose}
-      onOpen={handleSpeedDialOpen}
+      onClick={toggleSpeedDial}
       open={speedDialOpened}
     >
       {speedDialActions.map((action) => (

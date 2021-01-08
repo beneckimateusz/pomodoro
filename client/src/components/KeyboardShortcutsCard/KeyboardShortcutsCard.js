@@ -18,9 +18,6 @@ import clsx from 'clsx';
 import { useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    minHeight: '85vh',
-  },
   expand: {
     transform: 'rotate(0deg)',
     marginLeft: 'auto',

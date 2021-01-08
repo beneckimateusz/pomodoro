@@ -1,3 +1,4 @@
+import { Fade, LinearProgress } from '@material-ui/core';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import Home from '../Home/Home';
@@ -6,7 +7,15 @@ import SignIn from '../SignIn/SignIn';
 import SignUp from '../SignUp/SignUp';
 
 function Navigation() {
-  const { currentUser } = useCurrentUser();
+  const { currentUser, loading } = useCurrentUser();
+
+  if (loading) {
+    return (
+      <Fade in={true}>
+        <LinearProgress />
+      </Fade>
+    );
+  }
 
   return (
     <Layout currentUser={currentUser}>
