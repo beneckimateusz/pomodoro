@@ -1,6 +1,9 @@
+import { gql, useMutation } from '@apollo/client';
 import { Grid, makeStyles, Typography } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import alertSound from '../../assets/alert.mp3';
+import useCurrentUser from '../../hooks/useCurrentUser';
 import useSettings from '../../hooks/useSettings';
 import {
   motivationText,
@@ -9,10 +12,21 @@ import {
   TimerState,
   TimerType,
 } from '../../lib/timer';
-import { showBrowserNotification } from '../../lib/utils';
+import {
+  bottomCenterSnackbarOptions,
+  showBrowserNotification,
+} from '../../lib/utils';
 import KeyboardShortcutsCard from '../KeyboardShortcutsCard/KeyboardShortcutsCard';
 import Timer from '../Timer/Timer';
 import TimerPicker from '../TimerPicker/TimerPicker';
+
+const SAVE_POMODORO = gql`
+  mutation SavePomodoro($endDate: DateTime!, $duration: Int!) {
+    createPomodoro(endDate: $endDate, duration: $duration) {
+      id
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,11 +37,20 @@ const useStyles = makeStyles((theme) => ({
 function Home() {
   const classes = useStyles();
   const alert = useMemo(() => new Audio(alertSound), []);
+  const { enqueueSnackbar } = useSnackbar();
 
   const { settings } = useSettings();
+  const { currentUser } = useCurrentUser();
+  const [savePomodoro] = useMutation(SAVE_POMODORO, {
+    onCompleted: () =>
+      enqueueSnackbar('Session saved', bottomCenterSnackbarOptions('success')),
+    onError: (err) => console.error(err),
+  });
+
   const [timer, setTimer] = useState(TimerType.POMODORO);
   const [timerState, setTimerState] = useState(TimerState.STOPPED);
-  const timerDuration = settings.timers[timer] * 60 * 1000;
+  const timerDurationMin = settings.timers[timer];
+  const timerDuration = timerDurationMin * 60 * 1000;
 
   const handleTimerStateChange = useCallback((state) => {
     setTimerState(state);
@@ -40,6 +63,21 @@ function Home() {
     },
     [handleTimerStateChange]
   );
+
+  useEffect(() => {
+    if (
+      currentUser &&
+      timer === TimerType.POMODORO &&
+      timerState === TimerState.ENDED
+    ) {
+      savePomodoro({
+        variables: {
+          endDate: new Date().toISOString(),
+          duration: timerDurationMin,
+        },
+      });
+    }
+  }, [currentUser, timer, timerDurationMin, timerState, savePomodoro]);
 
   useEffect(() => {
     if (timerState === TimerState.ENDED) {

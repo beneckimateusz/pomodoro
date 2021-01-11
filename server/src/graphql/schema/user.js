@@ -4,7 +4,7 @@ const userSchema = gql`
   extend type Query {
     me: User
 
-    users: [User!]!
+    allUsers: [User!]!
     user(id: ID!): User
   }
 
@@ -15,11 +15,16 @@ const userSchema = gql`
     updateUserSettings(settings: UserSettingsInput!): UserSettings!
   }
 
+  type Token {
+    token: String!
+  }
+
   type User {
     id: ID!
     username: String!
     email: String!
     settings: UserSettings!
+    pomodoros: [Pomodoro!]!
   }
 
   type UserSettings {
@@ -44,10 +49,6 @@ const userSchema = gql`
     pomodoro: Int!
     shortBreak: Int!
     longBreak: Int!
-  }
-
-  type Token {
-    token: String!
   }
 `;
 

@@ -1,8 +1,11 @@
 const { gql } = require('apollo-server');
 
 const userSchema = require('./user');
+const pomodoroSchema = require('./pomodoro');
 
 const linkSchema = gql`
+  scalar DateTime
+
   type Query {
     _: Boolean
   }
@@ -16,4 +19,4 @@ const linkSchema = gql`
   }
 `;
 
-module.exports = [linkSchema, userSchema];
+module.exports = [linkSchema, userSchema, pomodoroSchema];

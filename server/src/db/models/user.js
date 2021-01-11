@@ -71,4 +71,14 @@ userSchema.methods.generatePasswordHash = async function generatePasswordHash() 
 
 const User = mongoose.model('User', userSchema);
 
+User.findByLogin = async (login) => {
+  let user = await User.findOne({ username: login });
+
+  if (!user) {
+    user = await User.findOne({ email: login });
+  }
+
+  return user;
+};
+
 module.exports = User;

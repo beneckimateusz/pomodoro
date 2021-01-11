@@ -1,25 +1,19 @@
 const { AuthenticationError, UserInputError } = require('apollo-server');
-const jwt = require('jsonwebtoken');
-const config = require('../../utils/config');
 const { getMongooseValidationErrorMessages } = require('../../utils/errors');
-
-const createToken = ({ _id: id, username, email }) =>
-  jwt.sign({ id, username, email }, config.JWT_SECRET);
-
-const getUserFromToken = (token) => {
-  if (!token.startsWith('Bearer ')) return null;
-
-  return jwt.verify(token.substring(7), config.JWT_SECRET);
-};
+const { createToken } = require('../../utils/auth');
 
 const userResolvers = {
+  User: {
+    pomodoros: async (parent, args, { models }) =>
+      models.Pomodoro.find({ user: parent.id }),
+  },
   Query: {
     me: (parent, args, { models, me }) => {
       if (!me) return null;
       return models.User.findById(me.id);
     },
 
-    users: (parent, args, { models }) => models.User.find({}),
+    allUsers: (parent, args, { models }) => models.User.find({}),
     user: (parent, { id }, { models }) => models.User.findById(id),
   },
   Mutation: {
@@ -65,4 +59,4 @@ const userResolvers = {
   },
 };
 
-module.exports = { userResolvers, getUserFromToken };
+module.exports = userResolvers;

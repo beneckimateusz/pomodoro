@@ -9,8 +9,10 @@ const buildPath = path.join(__dirname, '../build');
 app.use(cors());
 app.use(express.static('build'));
 
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(buildPath, 'index.html'));
-});
+if (process.env.NODE_ENV === 'production') {
+  app.get('/*', (req, res) => {
+    res.sendFile(path.join(buildPath, 'index.html'));
+  });
+}
 
 module.exports = app;

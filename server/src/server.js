@@ -5,7 +5,7 @@ const config = require('./utils/config');
 const resolvers = require('./graphql/resolvers');
 const schema = require('./graphql/schema');
 const models = require('./graphql/models');
-const { getUserFromToken } = require('./graphql/resolvers/user');
+const { getUserFromToken } = require('./utils/auth');
 
 const server = new ApolloServer({
   typeDefs: schema,
@@ -26,5 +26,6 @@ server.applyMiddleware({ app, path: '/api' });
 const httpServer = http.createServer(app);
 
 httpServer.listen({ port: config.PORT }, () =>
+  // eslint-disable-next-line no-console
   console.log(`Server running at port ${config.PORT}`)
 );
