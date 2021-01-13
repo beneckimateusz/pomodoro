@@ -1,5 +1,5 @@
 import { gql, useMutation } from '@apollo/client';
-import { Grid, makeStyles, Typography } from '@material-ui/core';
+import { Grid, Hidden, makeStyles, Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import alertSound from '../../assets/alert.mp3';
@@ -137,9 +137,11 @@ function Home() {
             </Grid>
           )}
         </Grid>
-        <Grid item>
-          <KeyboardShortcutsCard />
-        </Grid>
+        <Hidden smDown>
+          <Grid item>
+            <KeyboardShortcutsCard />
+          </Grid>
+        </Hidden>
       </Grid>
       <TimerPicker onChange={handleTimerChange} />
     </div>
