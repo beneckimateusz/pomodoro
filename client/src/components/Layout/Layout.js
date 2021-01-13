@@ -7,10 +7,12 @@ import {
   Typography,
 } from '@material-ui/core';
 import AlarmOnIcon from '@material-ui/icons/AlarmOn';
+import InfoIcon from '@material-ui/icons/Info';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import InfoDialog from '../InfoDialog/InfoDialog';
 import SettingsDialog from '../SettingsDialog/SettingsDialog';
 import UserMenu from './UserMenu/UserMenu';
 
@@ -35,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 function Layout({ currentUser, children }) {
   const classes = useStyles();
   const [settingsOpened, setSettingsOpened] = useState(false);
+  const [infoOpened, setInfoOpened] = useState(false);
 
   return (
     <>
@@ -55,6 +58,11 @@ function Layout({ currentUser, children }) {
               </Typography>
             </Grid>
             <Grid item>
+              <IconButton onClick={() => setInfoOpened(true)} color="inherit">
+                <InfoIcon />
+              </IconButton>
+            </Grid>
+            <Grid item>
               <IconButton
                 onClick={() => setSettingsOpened(true)}
                 color="inherit"
@@ -72,6 +80,7 @@ function Layout({ currentUser, children }) {
         opened={settingsOpened}
         onClose={() => setSettingsOpened(false)}
       />
+      <InfoDialog opened={infoOpened} onClose={() => setInfoOpened(false)} />
       <div className={classes.content}>{children}</div>
     </>
   );
