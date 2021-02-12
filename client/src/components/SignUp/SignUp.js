@@ -16,7 +16,9 @@ const SIGN_UP = gql`
 function SignUp() {
   const client = useApolloClient();
   const history = useHistory();
+
   const { enqueueSnackbar } = useSnackbar();
+
   const [signUp, { loading, error }] = useMutation(SIGN_UP, {
     onCompleted: async ({ signUp }) => {
       if (signUp?.token) {

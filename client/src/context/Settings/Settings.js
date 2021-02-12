@@ -1,3 +1,7 @@
+/**
+ * Settings can come from either the local storage or backend,
+ * regarding whether the user is logged in or not.
+ */
 import React, { useEffect, useMemo, useState } from 'react';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import { getSettingsFromStorage } from '../../lib/settings';

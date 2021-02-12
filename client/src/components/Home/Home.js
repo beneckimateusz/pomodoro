@@ -41,6 +41,7 @@ function Home() {
 
   const { settings } = useSettings();
   const { currentUser } = useCurrentUser();
+
   const [savePomodoro] = useMutation(SAVE_POMODORO, {
     onCompleted: () =>
       enqueueSnackbar('Session saved', bottomCenterSnackbarOptions('success')),
@@ -64,6 +65,9 @@ function Home() {
     [handleTimerStateChange]
   );
 
+  /**
+   * Handle pomodoro session persistence for a logged in user.
+   */
   useEffect(() => {
     if (
       currentUser &&
@@ -79,6 +83,9 @@ function Home() {
     }
   }, [currentUser, timer, timerDurationMin, timerState, savePomodoro]);
 
+  /**
+   * Handle interval completion
+   */
   useEffect(() => {
     if (timerState === TimerState.ENDED) {
       alert.play();
@@ -90,6 +97,9 @@ function Home() {
     }
   }, [timerState, timer, alert, settings.desktopAlerts]);
 
+  /**
+   * Handle shortcuts which change the timer type
+   */
   useEffect(() => {
     const shortcutHandler = (e) => {
       if (e.altKey) {

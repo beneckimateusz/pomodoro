@@ -8,6 +8,9 @@ function Timer({ duration, state, onStateChange }) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const humanReadableTime = millisecondsToClockFormat(timeLeft);
 
+  /**
+   * React to timer type change from the parent component
+   */
   useEffect(() => {
     setTimeLeft(duration);
   }, [duration]);
@@ -31,7 +34,10 @@ function Timer({ duration, state, onStateChange }) {
     setTimeLeft(duration);
   }, [duration, handleStopTimer]);
 
-  // countdown logic
+  /**
+   * Countdown logic implemented using dates for better performance.
+   * Still not perfect, service workers should be considered.
+   */
   useEffect(() => {
     if (state !== TimerState.STARTED) return;
 
@@ -45,7 +51,9 @@ function Timer({ duration, state, onStateChange }) {
     return () => clearInterval(intervalId);
   }, [state, deadline, handleEndTimer]);
 
-  // document.title management
+  /**
+   * Handle tab title change according to the time left
+   */
   useEffect(() => {
     if (state === TimerState.STARTED) {
       document.title = `(${humanReadableTime}) Pomodoro`;
@@ -54,7 +62,9 @@ function Timer({ duration, state, onStateChange }) {
     }
   }, [state, timeLeft, humanReadableTime, duration]);
 
-  // keyboard shortcuts registration
+  /**
+   * Handle shortcuts which change the timer state
+   */
   useEffect(() => {
     const shortcutHandler = (e) => {
       if (e.altKey && e.code === 'KeyR') {
