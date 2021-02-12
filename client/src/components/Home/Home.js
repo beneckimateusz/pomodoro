@@ -58,11 +58,12 @@ function Home() {
   }, []);
 
   const handleTimerChange = useCallback(
-    (timer) => {
+    (newTimer) => {
+      if (newTimer === timer) return;
       handleTimerStateChange(TimerState.STOPPED);
-      setTimer(timer);
+      setTimer(newTimer);
     },
-    [handleTimerStateChange]
+    [timer, handleTimerStateChange]
   );
 
   /**
