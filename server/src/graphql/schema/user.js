@@ -3,9 +3,6 @@ const { gql } = require('apollo-server');
 const userSchema = gql`
   extend type Query {
     me: User
-
-    allUsers: [User!]!
-    user(id: ID!): User
   }
 
   extend type Mutation {

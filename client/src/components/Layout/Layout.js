@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import AlarmOnIcon from '@material-ui/icons/AlarmOn';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import InfoIcon from '@material-ui/icons/Info';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PropTypes from 'prop-types';
@@ -60,6 +61,11 @@ function Layout({ currentUser, children }) {
             <Grid item>
               <IconButton onClick={() => setInfoOpened(true)} color="inherit">
                 <InfoIcon />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton color="inherit" component={Link} to="/summary">
+                <AssessmentIcon />
               </IconButton>
             </Grid>
             <Grid item>

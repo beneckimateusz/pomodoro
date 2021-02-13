@@ -2,16 +2,6 @@ const { AuthenticationError, UserInputError } = require('apollo-server');
 const { getMongooseValidationErrorMessages } = require('../../utils/errors');
 
 const pomodoroResolvers = {
-  Query: {
-    allPomodoros: (parent, args, { models, me }) => {
-      if (!me) throw new AuthenticationError('not authenticated');
-
-      // there is no resolver for 'user' field on type Pomodoro,
-      // hence the populate
-      // (not needed and n+1 problem)
-      return models.Pomodoro.find({}).populate('user');
-    },
-  },
   Mutation: {
     createPomodoro: async (parent, { endDate, duration }, { models, me }) => {
       if (!me) throw new AuthenticationError('not authenticated');

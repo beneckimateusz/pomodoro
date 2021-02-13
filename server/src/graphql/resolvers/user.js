@@ -12,9 +12,6 @@ const userResolvers = {
       if (!me) return null;
       return models.User.findById(me.id);
     },
-
-    allUsers: (parent, args, { models }) => models.User.find({}),
-    user: (parent, { id }, { models }) => models.User.findById(id),
   },
   Mutation: {
     signUp: async (parent, { username, email, password }, { models }) => {

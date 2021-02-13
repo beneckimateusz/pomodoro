@@ -2,6 +2,7 @@ const { gql } = require('apollo-server');
 
 const userSchema = require('./user');
 const pomodoroSchema = require('./pomodoro');
+const summarySchema = require('./summary');
 
 const linkSchema = gql`
   scalar DateTime
@@ -19,4 +20,4 @@ const linkSchema = gql`
   }
 `;
 
-module.exports = [linkSchema, userSchema, pomodoroSchema];
+module.exports = [linkSchema, userSchema, pomodoroSchema, summarySchema];
