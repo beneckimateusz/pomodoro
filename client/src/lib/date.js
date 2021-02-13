@@ -12,7 +12,10 @@ export const TimePeriodLabel = {
   3: 'Year',
 };
 
-const getDateOnlyString = (date) => date.toISOString().substring(0, 10);
+export const getDateOnlyString = (date) => {
+  date = date instanceof Date ? date.toISOString() : date;
+  return date.substring(0, 10);
+};
 
 export const getTimePeriodRange = (timePeriodLabel) => {
   const startDate = new Date();

@@ -2,12 +2,12 @@ const { gql } = require('apollo-server');
 
 const summarySchema = gql`
   extend type Query {
-    periodSummary(startDate: DateTime!, endDate: DateTime!): Summary!
+    periodSummary(startDate: DateTime!, endDate: DateTime!): [Summary!]!
   }
 
   type Summary {
-    startDate: DateTime!
-    endDate: DateTime!
+    date: String!
+    totalDuration: Int!
     pomodoros: [Pomodoro!]!
   }
 `;

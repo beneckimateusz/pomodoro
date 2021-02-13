@@ -2,6 +2,10 @@ const { AuthenticationError, UserInputError } = require('apollo-server');
 const { getMongooseValidationErrorMessages } = require('../../utils/errors');
 
 const pomodoroResolvers = {
+  Pomodoro: {
+    // eslint-disable-next-line no-underscore-dangle
+    id: (parent) => parent._id,
+  },
   Mutation: {
     createPomodoro: async (parent, { endDate, duration }, { models, me }) => {
       if (!me) throw new AuthenticationError('not authenticated');
