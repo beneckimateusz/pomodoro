@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TimerPicker({ onChange }) {
+function TimerTypePicker({ onChange }) {
   const classes = useStyles();
   const [speedDialOpened, setSpeedDialOpened] = useState(false);
 
@@ -80,8 +80,8 @@ function TimerPicker({ onChange }) {
   );
 }
 
-TimerPicker.propTypes = {
+TimerTypePicker.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default TimerPicker;
+export default TimerTypePicker;

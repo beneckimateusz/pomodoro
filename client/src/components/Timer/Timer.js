@@ -1,132 +1,138 @@
-import { Button, Grid, Typography } from '@material-ui/core';
-import PropTypes from 'prop-types';
-import { useCallback, useEffect, useState } from 'react';
-import { millisecondsToClockFormat, TimerState } from '../../lib/timer';
+import { gql, useMutation } from '@apollo/client';
+import { Grid, Typography } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import alertSound from '../../assets/alert.mp3';
+import useCurrentUser from '../../hooks/useCurrentUser';
+import useSettings from '../../hooks/useSettings';
+import {
+  motivationText,
+  notificationText,
+  sessionTypeName,
+  TimerState,
+  TimerType,
+} from '../../lib/timer';
+import {
+  bottomCenterSnackbarOptions,
+  showBrowserNotification,
+} from '../../lib/utils';
+import Countdown from '../Countdown/Countdown';
+import TimerTypePicker from '../TimerTypePicker/TimerTypePicker';
 
-function Timer({ duration, state, onStateChange }) {
-  const [deadline, setDeadline] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(duration);
-  const humanReadableTime = millisecondsToClockFormat(timeLeft);
-
-  /**
-   * React to timer type change from the parent component
-   */
-  useEffect(() => {
-    setTimeLeft(duration);
-  }, [duration]);
-
-  const handleStartTimer = useCallback(() => {
-    setDeadline(Date.now() + timeLeft);
-    onStateChange(TimerState.STARTED);
-  }, [onStateChange, setDeadline, timeLeft]);
-
-  const handleStopTimer = useCallback(() => {
-    onStateChange(TimerState.STOPPED);
-  }, [onStateChange]);
-
-  const handleEndTimer = useCallback(() => {
-    setTimeLeft(0);
-    onStateChange(TimerState.ENDED);
-  }, [onStateChange]);
-
-  const handleResetTimer = useCallback(() => {
-    handleStopTimer();
-    setTimeLeft(duration);
-  }, [duration, handleStopTimer]);
-
-  /**
-   * Countdown logic implemented using dates for better performance.
-   * Still not perfect, service workers should be considered.
-   */
-  useEffect(() => {
-    if (state !== TimerState.STARTED) return;
-
-    const intervalId = setInterval(() => {
-      const delta = deadline - Date.now();
-      setTimeLeft(delta);
-
-      if (delta < 1000) handleEndTimer();
-    }, 250);
-
-    return () => clearInterval(intervalId);
-  }, [state, deadline, handleEndTimer]);
-
-  /**
-   * Handle tab title change according to the time left
-   */
-  useEffect(() => {
-    if (state === TimerState.STARTED) {
-      document.title = `(${humanReadableTime}) Pomodoro`;
-    } else if (timeLeft === duration) {
-      document.title = 'Pomodoro';
+const SAVE_POMODORO = gql`
+  mutation SavePomodoro($endDate: DateTime!, $duration: Int!) {
+    createPomodoro(endDate: $endDate, duration: $duration) {
+      id
     }
-  }, [state, timeLeft, humanReadableTime, duration]);
+  }
+`;
+
+function Timer() {
+  const alert = useMemo(() => new Audio(alertSound), []);
+  const { enqueueSnackbar } = useSnackbar();
+
+  const { settings } = useSettings();
+  const { currentUser } = useCurrentUser();
+
+  const [savePomodoro] = useMutation(SAVE_POMODORO, {
+    onCompleted: () =>
+      enqueueSnackbar('Session saved', bottomCenterSnackbarOptions('success')),
+    onError: (err) => console.error(err),
+  });
+
+  const [timer, setTimer] = useState(TimerType.POMODORO);
+  const [timerState, setTimerState] = useState(TimerState.STOPPED);
+  const timerDurationMin = settings.timers[timer];
+  const timerDurationMs = timerDurationMin * 60 * 1000;
+
+  const handleTimerStateChange = useCallback((state) => {
+    setTimerState(state);
+  }, []);
+
+  const handleTimerChange = useCallback(
+    (newTimer) => {
+      if (newTimer === timer) return;
+      handleTimerStateChange(TimerState.STOPPED);
+      setTimer(newTimer);
+    },
+    [timer, handleTimerStateChange]
+  );
 
   /**
-   * Handle shortcuts which change the timer state
+   * Handle pomodoro session persistence for a logged in user.
+   */
+  useEffect(() => {
+    if (
+      currentUser &&
+      timer === TimerType.POMODORO &&
+      timerState === TimerState.ENDED
+    ) {
+      savePomodoro({
+        variables: {
+          endDate: new Date().toISOString(),
+          duration: timerDurationMin,
+        },
+      });
+    }
+  }, [currentUser, timer, timerDurationMin, timerState, savePomodoro]);
+
+  /**
+   * Handle interval completion
+   */
+  useEffect(() => {
+    if (timerState === TimerState.ENDED) {
+      alert.play();
+
+      if (settings.desktopAlerts) {
+        const { title, body } = notificationText(timer);
+        showBrowserNotification(title, body);
+      }
+    }
+  }, [timerState, timer, alert, settings.desktopAlerts]);
+
+  /**
+   * Handle shortcuts which change the timer type
    */
   useEffect(() => {
     const shortcutHandler = (e) => {
-      if (e.altKey && e.code === 'KeyR') {
-        handleResetTimer();
-      } else if (e.code === 'Space' && state !== TimerState.ENDED) {
-        state === TimerState.STARTED ? handleStopTimer() : handleStartTimer();
+      if (e.altKey) {
+        if (e.code === 'KeyP') {
+          handleTimerChange(TimerType.POMODORO);
+        } else if (e.code === 'KeyS') {
+          handleTimerChange(TimerType.SHORT_BREAK);
+        } else if (e.code === 'KeyL') {
+          handleTimerChange(TimerType.LONG_BREAK);
+        }
       }
     };
 
     window.addEventListener('keydown', shortcutHandler);
 
     return () => window.removeEventListener('keydown', shortcutHandler);
-  }, [handleResetTimer, handleStopTimer, handleStartTimer, state]);
+  }, [handleTimerChange]);
 
   return (
-    <Grid container direction="column" alignItems="center" spacing={3}>
+    <Grid container item direction="column" alignItems="center" spacing={2}>
       <Grid item>
-        <Typography variant="h1">{humanReadableTime}</Typography>
+        <Typography variant="h4">{sessionTypeName(timer)}</Typography>
       </Grid>
-      <Grid item container justify="center" spacing={2}>
-        <Grid item>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-            disabled={timeLeft === 0 || state === TimerState.STARTED}
-            onClick={handleStartTimer}
-          >
-            Start
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-            disabled={timeLeft === 0 || state === TimerState.STOPPED}
-            onClick={handleStopTimer}
-          >
-            Stop
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-            disabled={timeLeft === duration}
-            onClick={handleResetTimer}
-          >
-            Reset
-          </Button>
-        </Grid>
+      <Grid item>
+        <Typography variant="h5">
+          {motivationText(timer, timerState)}
+        </Typography>
       </Grid>
+      {settings.timers && (
+        <Grid item>
+          <Countdown
+            duration={timerDurationMs}
+            state={timerState}
+            onStateChange={handleTimerStateChange}
+          />
+        </Grid>
+      )}
+      <TimerTypePicker onChange={handleTimerChange} />
     </Grid>
   );
 }
-
-Timer.propTypes = {
-  duration: PropTypes.number.isRequired,
-  state: PropTypes.oneOf(Object.values(TimerState)),
-  onStateChange: PropTypes.func.isRequired,
-};
 
 export default Timer;

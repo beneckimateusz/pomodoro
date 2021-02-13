@@ -1,6 +1,7 @@
 import { gql, useApolloClient, useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
+import { saveAuthToken } from '../../lib/auth';
 import { bottomCenterSnackbarOptions } from '../../lib/utils';
 import CenteredFormContainer from '../CenteredFormContainer/CenteredFormContainer';
 import SignInForm from './SignInForm/SignInForm';
@@ -20,8 +21,9 @@ function SignIn() {
   const [signIn, { loading, error }] = useMutation(SIGN_IN, {
     onCompleted: async ({ signIn }) => {
       if (signIn?.token) {
-        localStorage.setItem('token', signIn.token);
+        saveAuthToken(signIn.token);
         await client.reFetchObservableQueries();
+
         enqueueSnackbar(
           'Successfully signed in',
           bottomCenterSnackbarOptions('success')
