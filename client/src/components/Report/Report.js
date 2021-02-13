@@ -26,15 +26,15 @@ import {
 } from '../../lib/date';
 import Loading from '../Loading/Loading';
 
-const SUMMARY = gql`
-  query PeriodSummary($startDate: DateTime!, $endDate: DateTime!) {
-    periodSummary(startDate: $startDate, endDate: $endDate) {
-      date
+const REPORT = gql`
+  query PeriodReport($startDate: DateTime!, $endDate: DateTime!) {
+    periodReport(startDate: $startDate, endDate: $endDate) {
       totalDuration
-      pomodoros {
-        id
-        endDate
+      totalPomodoroCount
+      daySummaries {
+        date
         duration
+        pomodoroCount
       }
     }
   }
@@ -54,12 +54,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Summary = () => {
+const Report = () => {
   const classes = useStyles();
   const theme = useTheme();
   const { currentUser } = useCurrentUser();
-  const [getSummary, { loading, data }] = useLazyQuery(SUMMARY);
-  const [timePeriodId, setTimePeriodId] = useState(TimePeriodId.DAY);
+  const [getSummary, { loading, data }] = useLazyQuery(REPORT);
+  const [timePeriodId, setTimePeriodId] = useState(TimePeriodId.MONTH);
 
   const handleTimePeriodChange = (e, newValue) => {
     setTimePeriodId(newValue);
@@ -72,7 +72,7 @@ const Summary = () => {
     });
   }, [timePeriodId, getSummary]);
 
-  const chartData = data?.periodSummary;
+  const chartData = data?.periodReport.daySummaries;
 
   const renderLineChart = () => {
     return chartData?.length > 0 ? (
@@ -84,7 +84,7 @@ const Summary = () => {
       >
         <Line
           type="monotone"
-          dataKey="totalDuration"
+          dataKey="duration"
           stroke={theme.palette.primary.main}
         />
         <CartesianGrid stroke="#ccc" strokeDasharray="8 8" />
@@ -134,4 +134,4 @@ const Summary = () => {
   );
 };
 
-export default Summary;
+export default Report;

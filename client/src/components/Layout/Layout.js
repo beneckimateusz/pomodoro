@@ -64,7 +64,7 @@ function Layout({ currentUser, children }) {
               </IconButton>
             </Grid>
             <Grid item>
-              <IconButton color="inherit" component={Link} to="/summary">
+              <IconButton color="inherit" component={Link} to="/report">
                 <AssessmentIcon />
               </IconButton>
             </Grid>

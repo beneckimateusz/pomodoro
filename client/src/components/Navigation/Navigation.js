@@ -3,9 +3,9 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import Home from '../Home/Home';
 import Layout from '../Layout/Layout';
+import Report from '../Report/Report';
 import SignIn from '../SignIn/SignIn';
 import SignUp from '../SignUp/SignUp';
-import Summary from '../Summary/Summary';
 
 function Navigation() {
   const { currentUser, loading } = useCurrentUser();
@@ -24,8 +24,8 @@ function Navigation() {
         <Route exact path="/">
           <Home />
         </Route>
-        <Route exact path="/summary">
-          <Summary />
+        <Route exact path="/report">
+          <Report />
         </Route>
         <Route>
           {!currentUser && (

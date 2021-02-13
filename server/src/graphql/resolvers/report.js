@@ -1,19 +1,11 @@
 const { AuthenticationError } = require('apollo-server');
 
-const summaryResolvers = {
+const reportResolvers = {
   Query: {
-    periodSummary: async (parent, { startDate, endDate }, { me, models }) => {
+    periodReport: async (parent, { startDate, endDate }, { me, models }) => {
       if (!me) throw new AuthenticationError('not authenticated');
 
-      // const pomodoros = await models.Pomodoro.find({
-      //   endDate: {
-      //     $gte: getDateOnlyString(startDate),
-      //     $lt: getDateOnlyString(endDate),
-      //   },
-      //   user: me.id,
-      // }).sort({ endDate: 1 });
-
-      const summaries = await models.Pomodoro.aggregate([
+      const daySummaries = await models.Pomodoro.aggregate([
         {
           $match: {
             endDate: {
@@ -25,13 +17,13 @@ const summaryResolvers = {
         {
           $group: {
             _id: { $dateToString: { format: '%Y-%m-%d', date: '$endDate' } },
-            pomodoros: { $push: '$$ROOT' },
+            pomodoroCount: { $sum: 1 },
+            duration: { $sum: '$duration' },
           },
         },
         {
           $addFields: {
             date: '$_id',
-            totalDuration: { $sum: '$pomodoros.duration' },
           },
         },
         {
@@ -42,9 +34,15 @@ const summaryResolvers = {
         },
       ]);
 
-      return summaries;
+      const report = {
+        totalDuration: daySummaries.reduce((acc, ds) => acc + ds.duration, 0),
+        totalPomodoroCount: daySummaries.length,
+        daySummaries,
+      };
+
+      return report;
     },
   },
 };
 
-module.exports = summaryResolvers;
+module.exports = reportResolvers;
