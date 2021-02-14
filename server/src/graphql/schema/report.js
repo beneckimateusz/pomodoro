@@ -11,11 +11,14 @@ const reportSchema = gql`
     date: String!
     pomodoroCount: Int!
     duration: Int!
+    avgDuration: Float!
   }
 
   type PeriodReport {
     totalDuration: Int!
     totalPomodoroCount: Int!
+    avgTotalDuration: Float!
+    avgTotalPomodoroCount: Float!
     daySummaries: [DaySummary!]!
   }
 
@@ -23,17 +26,21 @@ const reportSchema = gql`
     month: Int!
     pomodoroCount: Int!
     duration: Int!
+    avgDuration: Float!
   }
 
   type YearReport {
     totalDuration: Int!
     totalPomodoroCount: Int!
+    avgTotalDuration: Float!
+    avgTotalPomodoroCount: Float!
     monthSummaries: [MonthSummary!]!
   }
 
   type DayReport {
     totalDuration: Int!
     totalPomodoroCount: Int!
+    avgDuration: Float!
     pomodoros: [Pomodoro!]!
   }
 `;

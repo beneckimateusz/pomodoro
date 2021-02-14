@@ -1,5 +1,6 @@
 const { AuthenticationError } = require('apollo-server');
 const mongoose = require('mongoose');
+const { safeDivision } = require('../../utils/utils');
 
 const reportResolvers = {
   Query: {
@@ -21,22 +22,42 @@ const reportResolvers = {
             _id: { $dateToString: { format: '%Y-%m-%d', date: '$endDate' } },
             pomodoroCount: { $sum: 1 },
             duration: { $sum: '$duration' },
+            avgDuration: { $avg: '$duration' },
           },
         },
         {
-          $project: { _id: 0, date: '$_id', pomodoroCount: 1, duration: 1 },
+          $addFields: { date: '$_id' },
+        },
+        {
+          $project: { _id: 0 },
         },
         {
           $sort: { date: 1 },
         },
       ]);
 
+      const totalDuration = daySummaries.reduce(
+        (acc, ds) => acc + ds.duration,
+        0
+      );
+
+      const avgTotalDuration = safeDivision(totalDuration, daySummaries.length);
+
+      const totalPomodoroCount = daySummaries.reduce(
+        (acc, ds) => acc + ds.pomodoroCount,
+        0
+      );
+
+      const avgTotalPomodoroCount = safeDivision(
+        totalPomodoroCount,
+        daySummaries.length
+      );
+
       const report = {
-        totalDuration: daySummaries.reduce((acc, ds) => acc + ds.duration, 0),
-        totalPomodoroCount: daySummaries.reduce(
-          (acc, ds) => acc + ds.pomodoroCount,
-          0
-        ),
+        totalDuration,
+        totalPomodoroCount,
+        avgTotalDuration,
+        avgTotalPomodoroCount,
         daySummaries,
       };
 
@@ -67,22 +88,45 @@ const reportResolvers = {
             _id: '$month',
             pomodoroCount: { $sum: 1 },
             duration: { $sum: '$duration' },
+            avgDuration: { $avg: '$duration' },
           },
         },
         {
-          $project: { _id: 0, month: '$_id', pomodoroCount: 1, duration: 1 },
+          $addFields: { month: '$_id' },
+        },
+        {
+          $project: { _id: 0 },
         },
         {
           $sort: { month: 1 },
         },
       ]);
 
+      const totalDuration = monthSummaries.reduce(
+        (acc, ds) => acc + ds.duration,
+        0
+      );
+
+      const avgTotalDuration = safeDivision(
+        totalDuration,
+        monthSummaries.length
+      );
+
+      const totalPomodoroCount = monthSummaries.reduce(
+        (acc, ds) => acc + ds.pomodoroCount,
+        0
+      );
+
+      const avgTotalPomodoroCount = safeDivision(
+        totalPomodoroCount,
+        monthSummaries.length
+      );
+
       const report = {
-        totalDuration: monthSummaries.reduce((acc, ds) => acc + ds.duration, 0),
-        totalPomodoroCount: monthSummaries.reduce(
-          (acc, ds) => acc + ds.pomodoroCount,
-          0
-        ),
+        totalDuration,
+        totalPomodoroCount,
+        avgTotalDuration,
+        avgTotalPomodoroCount,
         monthSummaries,
       };
 
@@ -103,9 +147,14 @@ const reportResolvers = {
         },
       }).sort({ endDate: 'asc' });
 
+      const totalDuration = pomodoros.reduce((acc, p) => acc + p.duration, 0);
+      const avgDuration = safeDivision(totalDuration, pomodoros.length);
+      const totalPomodoroCount = pomodoros.length;
+
       const report = {
-        totalDuration: pomodoros.reduce((acc, p) => acc + p.duration, 0),
-        totalPomodoroCount: pomodoros.length,
+        totalDuration,
+        totalPomodoroCount,
+        avgDuration,
         pomodoros,
       };
 

@@ -19,9 +19,12 @@ const PERIOD_REPORT = gql`
     periodReport(startDate: $startDate, endDate: $endDate) {
       totalDuration
       totalPomodoroCount
+      avgTotalDuration
+      avgTotalPomodoroCount
       daySummaries {
         date
         duration
+        avgDuration
         pomodoroCount
       }
     }
@@ -49,6 +52,9 @@ const SingleDayTooltip = (props) => {
             </Typography>
             <Typography variant="body2">
               {payload[0].payload.pomodoroCount} pomodoro(s)
+            </Typography>
+            <Typography variant="body2">
+              Average: {payload[0].payload.avgDuration.toFixed(2)} min
             </Typography>
           </Box>
         )}
@@ -101,12 +107,15 @@ const PeriodReport = ({ timePeriodId }) => {
     }
 
     return chartData?.length > 0 ? (
-      <Grid item container direction="column" alignItems="center" spacing={4}>
+      <Grid item container justify="center" alignItems="center" spacing={4}>
         <Grid item>{renderChart()}</Grid>
         <Grid item>
           <Summary
             totalDuration={data?.periodReport.totalDuration}
             totalPomodoroCount={data?.periodReport.totalPomodoroCount}
+            avgDuration={data?.periodReport.avgTotalDuration}
+            avgPomodoroCount={data?.periodReport.avgTotalPomodoroCount}
+            avgUnit="day"
           />
         </Grid>
       </Grid>

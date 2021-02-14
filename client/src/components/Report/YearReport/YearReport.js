@@ -12,9 +12,12 @@ const YEAR_REPORT = gql`
     yearReport(year: $year) {
       totalDuration
       totalPomodoroCount
+      avgTotalDuration
+      avgTotalPomodoroCount
       monthSummaries {
         month
         duration
+        avgDuration
         pomodoroCount
       }
     }
@@ -35,6 +38,12 @@ const SingleMonthTooltip = (props) => {
               {payload[0].value}{' '}
               {payload[0].dataKey === 'duration' ? 'min' : 'pomodoro(s)'}
             </Typography>
+            {payload[0].dataKey === 'duration' && (
+              <Typography variant="body2">
+                Average pomodoro: {payload[0].payload.avgDuration.toFixed(2)}{' '}
+                min
+              </Typography>
+            )}
           </Box>
         )}
       </Paper>
@@ -87,13 +96,15 @@ const YearReport = ({ year }) => {
     }
 
     return chartData?.length > 0 ? (
-      <Grid item container direction="column" alignItems="center" spacing={4}>
+      <Grid item container justify="center" alignItems="center" spacing={4}>
         <Grid item>{renderChart()}</Grid>
         <Grid item>
           <Summary
-            periodLength={365}
             totalDuration={data?.yearReport.totalDuration}
             totalPomodoroCount={data?.yearReport.totalPomodoroCount}
+            avgDuration={data?.yearReport.avgTotalDuration}
+            avgPomodoroCount={data?.yearReport.avgTotalPomodoroCount}
+            avgUnit="month"
           />
         </Grid>
       </Grid>

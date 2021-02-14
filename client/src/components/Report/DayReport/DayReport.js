@@ -19,6 +19,7 @@ const DAY_REPORT = gql`
     dayReport(date: $date) {
       totalDuration
       totalPomodoroCount
+      avgDuration
       pomodoros {
         endDate
         duration
@@ -97,12 +98,14 @@ const DayReport = ({ date }) => {
     }
 
     return chartData?.length > 0 ? (
-      <Grid item container direction="column" alignItems="center" spacing={4}>
+      <Grid item container justify="center" alignItems="center" spacing={4}>
         <Grid item>{renderChart()}</Grid>
         <Grid item>
           <Summary
             totalDuration={data?.dayReport.totalDuration}
             totalPomodoroCount={data?.dayReport.totalPomodoroCount}
+            avgDuration={data?.dayReport.avgDuration}
+            avgUnit="day"
           />
         </Grid>
       </Grid>
