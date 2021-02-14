@@ -5,6 +5,13 @@ export const TimePeriodId = {
   YEAR: 3,
 };
 
+export const TimePeriodLength = {
+  0: 1,
+  1: 7,
+  2: 31,
+  3: 365,
+};
+
 export const TimePeriodLabel = {
   0: 'Day',
   1: 'Week',
@@ -17,23 +24,12 @@ export const getDateOnlyString = (date) => {
   return date.substring(0, 10);
 };
 
-export const getTimePeriodRange = (timePeriodLabel) => {
+export const getTimePeriodRange = (timePeriodId) => {
   const startDate = new Date();
   const endDate = new Date();
 
-  // eslint-disable-next-line default-case
-  switch (timePeriodLabel) {
-    case 'Day':
-      break;
-    case 'Week':
-      startDate.setDate(endDate.getDate() - 6);
-      break;
-    case 'Month':
-      startDate.setDate(endDate.getDate() - 30);
-      break;
-    case 'Year':
-      startDate.setDate(endDate.getDate() - 365);
-      break;
+  if (timePeriodId !== TimePeriodId.DAY) {
+    startDate.setDate(endDate.getDate() - TimePeriodLength[timePeriodId]);
   }
 
   /**
