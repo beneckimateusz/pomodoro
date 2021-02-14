@@ -97,10 +97,13 @@ function Timer() {
     const shortcutHandler = (e) => {
       if (e.altKey) {
         if (e.code === 'KeyP') {
+          e.preventDefault();
           handleTimerChange(TimerType.POMODORO);
         } else if (e.code === 'KeyS') {
+          e.preventDefault();
           handleTimerChange(TimerType.SHORT_BREAK);
         } else if (e.code === 'KeyL') {
+          e.preventDefault();
           handleTimerChange(TimerType.LONG_BREAK);
         }
       }

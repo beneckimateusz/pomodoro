@@ -68,8 +68,10 @@ function Countdown({ duration, state, onStateChange }) {
   useEffect(() => {
     const shortcutHandler = (e) => {
       if (e.altKey && e.code === 'KeyR') {
+        e.preventDefault();
         handleResetTimer();
       } else if (e.code === 'Space' && state !== TimerState.ENDED) {
+        e.preventDefault();
         state === TimerState.STARTED ? handleStopTimer() : handleStartTimer();
       }
     };
