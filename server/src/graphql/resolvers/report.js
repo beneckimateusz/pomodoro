@@ -88,6 +88,29 @@ const reportResolvers = {
 
       return report;
     },
+
+    dayReport: async (parent, { date }, { models, me }) => {
+      if (!me) throw new AuthenticationError('not authenticated');
+
+      const nextDayStart = new Date(date);
+      nextDayStart.setDate(nextDayStart.getDate() + 1);
+
+      const pomodoros = await models.Pomodoro.find({
+        user: me.id,
+        endDate: {
+          $gte: date,
+          $lt: nextDayStart,
+        },
+      }).sort({ endDate: 'asc' });
+
+      const report = {
+        totalDuration: pomodoros.reduce((acc, p) => acc + p.duration, 0),
+        totalPomodoroCount: pomodoros.length,
+        pomodoros,
+      };
+
+      return report;
+    },
   },
 };
 

@@ -2,8 +2,15 @@ import { Grid, makeStyles, Paper, Tab, Tabs } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { useState } from 'react';
 import useCurrentUser from '../../hooks/useCurrentUser';
-import { TimePeriodId, TimePeriodLabel } from '../../lib/date';
+import {
+  getCurrentDate,
+  getCurrentYear,
+  TimePeriodId,
+  TimePeriodLabel,
+} from '../../lib/date';
+import DayReport from './DayReport/DayReport';
 import PeriodReport from './PeriodReport/PeriodReport';
+import YearReport from './YearReport/YearReport';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,13 +28,16 @@ const Report = () => {
   };
 
   const renderReport = () => {
+    const currentYear = getCurrentYear();
+
     switch (timePeriodId) {
       case TimePeriodId.DAY:
+        return <DayReport date={getCurrentDate()} />;
       case TimePeriodId.WEEK:
       case TimePeriodId.MONTH:
         return <PeriodReport timePeriodId={timePeriodId} />;
       case TimePeriodId.YEAR:
-        return null;
+        return <YearReport year={currentYear} />;
       default:
         return null;
     }

@@ -13,15 +13,35 @@ export const TimePeriodLength = {
 };
 
 export const TimePeriodLabel = {
-  0: 'Day',
-  1: 'Week',
-  2: 'Month',
-  3: 'Year',
+  0: 'Today',
+  1: 'Last 7 days',
+  2: 'Last 31 days',
+  3: 'This year',
+};
+
+export const Month = {
+  1: 'January',
+  2: 'February',
+  3: 'March',
+  4: 'April',
+  5: 'May',
+  6: 'June',
+  7: 'July',
+  8: 'August',
+  9: 'September',
+  10: 'October',
+  11: 'November',
+  12: 'December',
 };
 
 export const getDateOnlyString = (date) => {
   date = date instanceof Date ? date.toISOString() : date;
   return date.substring(0, 10);
+};
+
+export const getTimeOnlyString = (date) => {
+  date = date instanceof Date ? date.toISOString() : date;
+  return date.substring(11, 16);
 };
 
 export const getTimePeriodRange = (timePeriodId) => {
@@ -43,3 +63,8 @@ export const getTimePeriodRange = (timePeriodId) => {
     endDate: getDateOnlyString(endDate),
   };
 };
+
+export const getCurrentYear = () =>
+  Number(new Date().toISOString().substring(0, 4));
+
+export const getCurrentDate = () => getDateOnlyString(new Date());

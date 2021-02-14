@@ -10,19 +10,18 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { getTimePeriodRange } from '../../../lib/date';
+import { getTimeOnlyString } from '../../../lib/date';
 import Loading from '../../Loading/Loading';
 import Summary from '../../Summary/Summary';
 
-const PERIOD_REPORT = gql`
-  query PeriodReport($startDate: DateTime!, $endDate: DateTime!) {
-    periodReport(startDate: $startDate, endDate: $endDate) {
+const DAY_REPORT = gql`
+  query DayReport($date: DateTime!) {
+    dayReport(date: $date) {
       totalDuration
       totalPomodoroCount
-      daySummaries {
-        date
+      pomodoros {
+        endDate
         duration
-        pomodoroCount
       }
     }
   }
@@ -31,27 +30,25 @@ const PERIOD_REPORT = gql`
 const ShortDateAxisTick = ({ x, y, payload }) => {
   return (
     <text x={x} y={y} dy={16} fill="#666" textAnchor="middle">
-      {payload.value.substring(5, 10)}
+      {getTimeOnlyString(payload.value)}
     </text>
   );
 };
 
 const SingleDayTooltip = (props) => {
   if (props.active) {
-    const { payload, label } = props;
+    const { payload, label: time, date } = props;
     return (
       <Paper elevation={2}>
-        {payload && (
-          <Box px={2} py={1}>
-            <Typography variant="subtitle2">{label}</Typography>
-            <Typography variant="body2" color="primary">
-              {payload[0].payload.duration} min
-            </Typography>
-            <Typography variant="body2">
-              {payload[0].payload.pomodoroCount} pomodoro(s)
-            </Typography>
-          </Box>
-        )}
+        <Box px={2} py={1}>
+          <Typography variant="subtitle2">{date}</Typography>
+          <Typography variant="body2">
+            Ended at {getTimeOnlyString(time)}
+          </Typography>
+          <Typography variant="body2" color="primary">
+            {payload && payload[0].payload.duration} min
+          </Typography>
+        </Box>
       </Paper>
     );
   }
@@ -59,16 +56,15 @@ const SingleDayTooltip = (props) => {
   return null;
 };
 
-const PeriodReport = ({ timePeriodId }) => {
-  const dateRange = getTimePeriodRange(timePeriodId);
+const DayReport = ({ date }) => {
   const theme = useTheme();
 
-  const { loading, error, data } = useQuery(PERIOD_REPORT, {
+  const { loading, error, data } = useQuery(DAY_REPORT, {
     fetchPolicy: 'cache-and-network',
-    variables: dateRange,
+    variables: { date },
   });
 
-  const chartData = data?.periodReport.daySummaries;
+  const chartData = data?.dayReport.pomodoros;
 
   const renderChart = () => (
     <LineChart
@@ -83,9 +79,9 @@ const PeriodReport = ({ timePeriodId }) => {
         stroke={theme.palette.primary.main}
       />
       <CartesianGrid stroke="#ccc" strokeDasharray="8 8" />
-      <XAxis dataKey="date" tick={<ShortDateAxisTick />} />
+      <XAxis dataKey="endDate" tick={<ShortDateAxisTick />} />
       <YAxis />
-      <Tooltip content={<SingleDayTooltip />} />
+      <Tooltip content={<SingleDayTooltip date={date} />} />
     </LineChart>
   );
 
@@ -105,8 +101,8 @@ const PeriodReport = ({ timePeriodId }) => {
         <Grid item>{renderChart()}</Grid>
         <Grid item>
           <Summary
-            totalDuration={data?.periodReport.totalDuration}
-            totalPomodoroCount={data?.periodReport.totalPomodoroCount}
+            totalDuration={data?.dayReport.totalDuration}
+            totalPomodoroCount={data?.dayReport.totalPomodoroCount}
           />
         </Grid>
       </Grid>
@@ -118,8 +114,8 @@ const PeriodReport = ({ timePeriodId }) => {
   return renderData();
 };
 
-PeriodReport.propTypes = {
-  timePeriodId: PropTypes.number.isRequired,
+DayReport.propTypes = {
+  date: PropTypes.string.isRequired,
 };
 
-export default PeriodReport;
+export default DayReport;

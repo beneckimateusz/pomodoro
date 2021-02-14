@@ -3,8 +3,8 @@ const { gql } = require('apollo-server');
 const reportSchema = gql`
   extend type Query {
     periodReport(startDate: DateTime!, endDate: DateTime!): PeriodReport!
-
     yearReport(year: Int!): YearReport!
+    dayReport(date: DateTime!): DayReport!
   }
 
   type DaySummary {
@@ -29,6 +29,12 @@ const reportSchema = gql`
     totalDuration: Int!
     totalPomodoroCount: Int!
     monthSummaries: [MonthSummary!]!
+  }
+
+  type DayReport {
+    totalDuration: Int!
+    totalPomodoroCount: Int!
+    pomodoros: [Pomodoro!]!
   }
 `;
 

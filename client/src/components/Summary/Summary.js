@@ -9,15 +9,10 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import PropTypes from 'prop-types';
 
-const Summary = ({ periodLength, totalPomodoroCount, totalDuration }) => {
+const Summary = ({ totalPomodoroCount, totalDuration }) => {
   return (
     <Paper elevation={3}>
       <List>
-        {periodLength > 1 && (
-          <ListItem>
-            <ListItemText secondary={`Last ${periodLength} days:`} />
-          </ListItem>
-        )}
         <ListItem>
           <ListItemIcon>
             <ScheduleIcon />
@@ -40,7 +35,6 @@ const Summary = ({ periodLength, totalPomodoroCount, totalDuration }) => {
 };
 
 Summary.propTypes = {
-  periodLength: PropTypes.number.isRequired,
   totalPomodoroCount: PropTypes.number.isRequired,
   totalDuration: PropTypes.number.isRequired,
 };

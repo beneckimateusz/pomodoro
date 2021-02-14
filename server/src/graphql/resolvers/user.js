@@ -3,10 +3,6 @@ const { getMongooseValidationErrorMessages } = require('../../utils/errors');
 const { createToken } = require('../../utils/auth');
 
 const userResolvers = {
-  User: {
-    pomodoros: async (parent, args, { models }) =>
-      models.Pomodoro.find({ user: parent.id }),
-  },
   Query: {
     me: (parent, args, { models, me }) => {
       if (!me) return null;

@@ -21,7 +21,6 @@ const userSchema = gql`
     username: String!
     email: String!
     settings: UserSettings!
-    pomodoros: [Pomodoro!]!
   }
 
   type UserSettings {
