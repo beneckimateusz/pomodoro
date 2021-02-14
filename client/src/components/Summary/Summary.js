@@ -3,13 +3,22 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  makeStyles,
   Paper,
 } from '@material-ui/core';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import PropTypes from 'prop-types';
 
+const useStyles = makeStyles(() => ({
+  bold: {
+    fontWeight: 500,
+  },
+}));
+
 const Summary = ({ totalPomodoroCount, totalDuration }) => {
+  const classes = useStyles();
+
   return (
     <Paper elevation={3}>
       <List>
@@ -18,7 +27,8 @@ const Summary = ({ totalPomodoroCount, totalDuration }) => {
             <ScheduleIcon />
           </ListItemIcon>
           <ListItemText>
-            Total duration: <strong>{totalDuration} min</strong>
+            Total duration:{' '}
+            <span className={classes.bold}>{totalDuration} min</span>
           </ListItemText>
         </ListItem>
         <ListItem>
@@ -26,7 +36,8 @@ const Summary = ({ totalPomodoroCount, totalDuration }) => {
             <PlayArrowIcon />
           </ListItemIcon>
           <ListItemText>
-            Total pomodoros: <strong>{totalPomodoroCount}</strong>
+            Total pomodoros:{' '}
+            <span className={classes.bold}>{totalPomodoroCount}</span>
           </ListItemText>
         </ListItem>
       </List>

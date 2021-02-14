@@ -11,6 +11,7 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  Typography,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
@@ -72,14 +73,17 @@ function KeyboardShortcutsCard() {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <TableContainer>
-            <Table>
+            <Table size="small">
+              <caption>It won't hurt to try those 🤠</caption>
               <TableBody>
                 {shortcuts.map(({ keyCombination, actionName }) => (
                   <TableRow key={keyCombination}>
                     <TableCell>
-                      <strong>{keyCombination}</strong>
+                      <Typography variant="button">{keyCombination}</Typography>
                     </TableCell>
-                    <TableCell>{actionName}</TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{actionName}</Typography>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
