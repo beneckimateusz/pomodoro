@@ -1,6 +1,11 @@
 import { gql, useLazyQuery } from '@apollo/client';
 import {
+  Box,
   Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   makeStyles,
   Paper,
   Tab,
@@ -8,6 +13,8 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 import { Alert } from '@material-ui/lab';
 import { useEffect, useState } from 'react';
 import {
@@ -48,6 +55,27 @@ const ShortDateAxisTick = ({ x, y, payload }) => {
   );
 };
 
+const SingleDayTooltip = (props) => {
+  if (props.active) {
+    const { payload, label } = props;
+    return (
+      <Paper elevation={2}>
+        <Box px={2} py={1}>
+          <Typography variant="subtitle2">{label}</Typography>
+          <Typography variant="body2" color="primary">
+            {payload && payload[0].payload.duration} min
+          </Typography>
+          <Typography variant="body2">
+            {payload && payload[0].payload.pomodoroCount} pomodoro(s)
+          </Typography>
+        </Box>
+      </Paper>
+    );
+  }
+
+  return null;
+};
+
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(3),
@@ -58,7 +86,9 @@ const Report = () => {
   const classes = useStyles();
   const theme = useTheme();
   const { currentUser } = useCurrentUser();
-  const [getSummary, { loading, data }] = useLazyQuery(REPORT);
+  const [getSummary, { loading, data }] = useLazyQuery(REPORT, {
+    fetchPolicy: 'cache-and-network',
+  });
   const [timePeriodId, setTimePeriodId] = useState(TimePeriodId.MONTH);
 
   const handleTimePeriodChange = (e, newValue) => {
@@ -74,24 +104,57 @@ const Report = () => {
 
   const chartData = data?.periodReport.daySummaries;
 
-  const renderLineChart = () => {
+  const renderLineChart = () => (
+    <LineChart
+      width={900}
+      height={300}
+      data={chartData}
+      margin={{ top: 5, right: 30, bottom: 5, left: 0 }}
+    >
+      <Line
+        type="monotone"
+        dataKey="duration"
+        stroke={theme.palette.primary.main}
+      />
+      <CartesianGrid stroke="#ccc" strokeDasharray="8 8" />
+      <XAxis dataKey="date" tick={<ShortDateAxisTick />} />
+      <YAxis />
+      <Tooltip content={<SingleDayTooltip />} />
+    </LineChart>
+  );
+
+  const renderData = () => {
     return chartData?.length > 0 ? (
-      <LineChart
-        width={900}
-        height={300}
-        data={chartData}
-        margin={{ top: 5, right: 30, bottom: 5, left: 0 }}
-      >
-        <Line
-          type="monotone"
-          dataKey="duration"
-          stroke={theme.palette.primary.main}
-        />
-        <CartesianGrid stroke="#ccc" strokeDasharray="8 8" />
-        <XAxis dataKey="date" tick={<ShortDateAxisTick />} />
-        <YAxis />
-        <Tooltip formatter={(value, name) => [`${value} min`, 'Total']} />
-      </LineChart>
+      <>
+        <Grid item>{renderLineChart()}</Grid>
+        <Grid item>
+          <Paper elevation={3}>
+            <List>
+              <ListItem>
+                <ListItemText style={{ textAlign: 'center' }}>🤠</ListItemText>
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <ScheduleIcon />
+                </ListItemIcon>
+                <ListItemText>
+                  Total duration:{' '}
+                  <strong>{data?.periodReport.totalDuration} min</strong>
+                </ListItemText>
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <PlayArrowIcon />
+                </ListItemIcon>
+                <ListItemText>
+                  Total pomodoros:{' '}
+                  <strong>{data?.periodReport.totalPomodoroCount}</strong>
+                </ListItemText>
+              </ListItem>
+            </List>
+          </Paper>
+        </Grid>
+      </>
     ) : (
       <Typography variant="subtitle1">No data available</Typography>
     );
@@ -127,7 +190,15 @@ const Report = () => {
               </Tabs>
             </Paper>
           </Grid>
-          <Grid item>{loading ? <Loading /> : renderLineChart()}</Grid>
+          {loading ? (
+            <Grid item>
+              <Loading />
+            </Grid>
+          ) : (
+            <Grid item container justify="center" spacing={2}>
+              {renderData()}
+            </Grid>
+          )}
         </>
       )}
     </Grid>

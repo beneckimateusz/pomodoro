@@ -1,4 +1,5 @@
 const { AuthenticationError } = require('apollo-server');
+const mongoose = require('mongoose');
 
 const reportResolvers = {
   Query: {
@@ -12,6 +13,7 @@ const reportResolvers = {
               $gte: startDate,
               $lt: endDate,
             },
+            user: mongoose.Types.ObjectId(me.id),
           },
         },
         {
@@ -36,7 +38,10 @@ const reportResolvers = {
 
       const report = {
         totalDuration: daySummaries.reduce((acc, ds) => acc + ds.duration, 0),
-        totalPomodoroCount: daySummaries.length,
+        totalPomodoroCount: daySummaries.reduce(
+          (acc, ds) => acc + ds.pomodoroCount,
+          0
+        ),
         daySummaries,
       };
 

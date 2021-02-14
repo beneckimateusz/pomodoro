@@ -36,6 +36,12 @@ export const getTimePeriodRange = (timePeriodLabel) => {
       break;
   }
 
+  /**
+   * Backend will be matching for datetimes earlier than the next day
+   * with 00:00:00 timestamp
+   */
+  endDate.setDate(endDate.getDate() + 1);
+
   return {
     startDate: getDateOnlyString(startDate),
     endDate: getDateOnlyString(endDate),

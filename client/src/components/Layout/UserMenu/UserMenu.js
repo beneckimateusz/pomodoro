@@ -59,9 +59,6 @@ function UserMenu({ currentUser }) {
               <MenuItem key="username" disabled>
                 {currentUser.username}
               </MenuItem>,
-              <MenuItem key="profile" onClick={handleCloseUserMenu}>
-                Profile
-              </MenuItem>,
               <MenuItem key="sign-out" onClick={handleLogout}>
                 Sign Out
               </MenuItem>,
