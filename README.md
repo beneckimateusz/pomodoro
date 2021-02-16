@@ -37,6 +37,7 @@
 
 - [Tech stack](#tech-stack)
 - [Features](#features)
+- [Issues](#issues)
 - [Presentation](#presentation)
 - [Development](#development)
 
@@ -55,7 +56,10 @@
 - ⌨️ **Keyboard shortcuts**: forget about moving your mouse around
 - ( ͡° ͜ʖ ͡°) **Overall decent**
 
-Currently the app supports mostly desktop display resolutions.
+## Issues
+
+- Currently only desktop resolutions are fully supported
+- Statistics aggregation has a slight problem with date handling that could possibly be fixed with storing information about user's time zone
 
 ## Presentation
 
